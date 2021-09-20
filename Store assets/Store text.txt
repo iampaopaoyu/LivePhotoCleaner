@@ -1,0 +1,34 @@
+English
+-------
+Live Photos are fantastic, but each picture weighs up to three times more than a still image. If you want to keep only the stills, that's a lot of wasted device memory.
+
+With LivePhotosCleaner, you can delete the "Live" part of the picture and thus cut the size of the image by three, reclaiming precious megabytes of memory for each image you clean up.
+
+Features
+- You can preview the memory that will be regained before cleaning up the photos
+- The still pictures remain linked with the albums they were added to.
+- Live Photos which were offloaded to iCloud are downloaded automatically.
+- The app is ad-free and will remain free forever because we care!
+
+Good to know
+- LivePhotoCleaner duplicates the Live Photo as a still picture, and moves the original to the "Recently Deleted" folder of the iOS Photos App. Thus memory will only be reclaimed after the photo is deleted for good.
+- The still pictures will appear as new pictures in the "Recents" album of the iOS Photos App. There is currently, no way around this, unfortunately.
+- Live Photos you edited (applied a bounce, loop, or long-exposure effect, applied a color filter, corrected exposure, cropped, etc.) cannot be cleaned up at the moment.
+
+
+German
+------
+Live Fotos sind fantastisch, aber jedes Bild belegt bis zu drei Mal so viel Speucher wie ein unbewegtes. Wenn Du nur diese aufheben möchtest, ist das eine ganze Menge verschwendeter Speicherplatz auf dem Gerät.
+
+Mit LivePhotoCleaner kannst du "Live"-Anteil löschen, und so die Größe auf ca. ein Drittel reduzieren. Das bringt dir kostbare Megabytes zurück.
+
+Funktionen
+- Vor dem Bereinigen kannst du Dir den erwarteten Speicherplatzgewinn anzeigen lassen
+- Die unbewgeten Bilder bleiben mit Alben, denen du Live-Fotos hinzugefügt hattest, verknüpft.
+- Live-Fotos, die du in die iCloud ausgelagert hattest, werden automatisch herunter geladen.
+- Die App enthält keine Werbung, sammelt keine Daten, und ist für immer kostenlos.
+
+Gut zu wissen
+- LivePhotoCleaner dupliziert Live-Fotos als unbewegte Bilder und verschiebt die Originale in den Ordner "Zuletzt gelöscht" der iOS Fotos-App. Speucher wird also erst dann wirklich freigegeben, wenn das Fotos dort entfernt wird.
+- Das unbewegte Bild erscheint als neues Foto im "Zuletzt"-Ordner der iOS Fotos-App. Leider lässt sich dies aktuell nicht anders lösen.
+- Bearbeitete Live-Fotos (wenn Du beispielsweise einen Farbfilter oder andere Effekte verwendet, oder Belichtung oder Ausschnitt verändert hast) können derzeit leider nicht bereinigt werden.

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg  viewBox="0 0 512 512" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 58 (84663) - https://sketch.com -->
+    <title>Icon</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#C5003E" offset="0%"></stop>
+            <stop stop-color="#8E002D" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="0%" y1="0%" x2="100%" y2="100%" id="linearGradient-2">
+            <stop stop-color="#C92C5B" offset="0%"></stop>
+            <stop stop-color="#CE5879" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g class="" id="Icon" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <rect id="Background" fill="url(#linearGradient-1)" x="0" y="0" width="512" height="512"></rect>
+        <g class="" id="Group" transform="translate(94.000000, 94.000000)">
+            <rect id="gradient" fill="url(#linearGradient-2)" transform="translate(162.500000, 162.500000) rotate(-315.000000) translate(-162.500000, -162.500000) " x="48" y="48" width="229" height="229"></rect>
+            <rect id="camera" fill="#DBDBD3" transform="translate(162.500000, 243.000000) rotate(-315.000000) translate(-162.500000, -243.000000) " x="105" y="186" width="115" height="114"></rect>
+        </g>
+        <path d="M254,313 C267.807119,313 279,324.192881 279,338 C279,351.807119 267.807119,363 254,363 C240.192881,363 229,351.807119 229,338 C229,324.192881 240.192881,313 254,313 Z M254,321 C244.611159,321 237,328.611159 237,338 C237,347.388841 244.611159,355 254,355 C263.388841,355 271,347.388841 271,338 C271,328.611159 263.388841,321 254,321 Z M311.5,333 C314.537566,333 317,335.462434 317,338.5 C317,341.537566 314.537566,344 311.5,344 C308.462434,344 306,341.537566 306,338.5 C306,335.462434 308.462434,333 311.5,333 Z" id="camera-details" fill="#CC426A" fill-rule="nonzero"></path>
+    </g>
+</svg>

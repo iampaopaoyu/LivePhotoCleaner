@@ -1,0 +1,86 @@
+/* 
+  Localizable.strings
+  LivePhotoCleaner
+
+  Created by Marco Schillinger on 01.07.21.
+*/
+
+// MARK: - App Settings View
+
+"view_appSettings_done" = "Done";
+"view_appSettings_navigation_title" = "Settings";
+
+"view_appSettings_info_section_header" = "Information";
+
+"view_appSettings_settings_section_header" = "Settings";
+"view_appSettings_settings_delete" = "Move original images in \"Recently Deleted\" folder";
+"view_appSettings_settings_addToAlbum" = "Add to album \"LivePhotoCleaner\"";
+"view_appSettings_settings_loadICloud" = "Load photos from iCloud";
+
+"view_appSettings_photoAccess_openSettings" = "Settings";
+"view_appSettings_photoAccess_adjustSelection" = "Adjust limited photo access";
+"view_appSettings_photoAccess_adjustSelection_warning" = "Care! While limited access is active, the duplicated photos can not be added to the album of the original photo! Any album information will be lost!";
+
+"view_appSettings_appInfo_imprint" = "Imprint and privacy policy";
+"view_appSettings_appInfo_footer_version" = "Version";
+
+"view_appSettings_accessLevelDescription_notDetermined" = "No permissions granted yet.";
+"view_appSettings_accessLevelDescription_restricted" = "Permission denied and cannot be granted.";
+"view_appSettings_accessLevelDescription_denied" = "Permission to access photo library is denied.";
+"view_appSettings_accessLevelDescription_authorized" = "The app has full access to the photo library.";
+"view_appSettings_accessLevelDescription_limited" = "The app has limited access to the photo library.";
+"view_appSettings_accessLevelDescription_unknown" = "An error occured. Access level could not be determined.";
+
+// MARK: - Photo Overview
+"view_photoOverview_navigation_title" = "Select photos";
+"view_photoOverview_checkButton" = "Check selection";
+"view_photoOverview_noLivePhotos" = "No live photos found.";
+"view_photoOverview_livePhotosNormal" = "Live photos (not edited)";
+"view_photoOverview_livePhotosEdited" = "Live photos (edited)";
+"view_photoOverview_editLostWarning" = "Only the original photo without any edits will be saved.";
+"view_photoOverview_selectAll" = "Select all";
+"view_photoOverview_deselectAll" = "Deselect all";
+"view_photoOverview_icloudLoadAlert_title" = "Loading images failed";
+"view_photoOverview_icloudLoadAlert_text" = "The App was unable to load one or more image from iCloud. Some images are maybe not shown at all or not shown in full resolution.";
+"view_photoOverview_icloudLoadAlert_ok" = "Ok";
+
+// MARK: - Selected photo Overview
+"view_selectedPhotoOverview_navigation_title" = "Check selection";
+"view_selectedPhotoOverview_startButton" = "Clean selected";
+"view_selectedPhotoOverview_freedSpace_active" = "Clean up will approximately free %@ MB";
+"view_selectedPhotoOverview_freedSpace_inactive" = "No additional storage will be available as deleting the original photo is deactivated.";
+
+// MARK: Selected photo Overview - execution
+"view_selectedPhotoOverview_alert_error_title" = "Error";
+"view_selectedPhotoOverview_alert_error_message" = "An error occured - duplicated images could not be saved.";
+"view_selectedPhotoOverview_alert_error_dismissButton" = "OK";
+
+"view_selectedPhotoOverview_alert_success_title" = "Finished";
+"view_selectedPhotoOverview_alert_success_message" = "Live Photos have successfully been duplicated.";
+"view_selectedPhotoOverview_alert_success_button" = "OK";
+
+"view_selectedPhotoOverview_alert_warning_title" = "Warning";
+"view_selectedPhotoOverview_alert_warning_message" = "%d edited live photos are selected.\nEditing information can not be transferred to the still photo and will be lost if the original image is deleted!";
+"view_selectedPhotoOverview_alert_cancel_button" = "Abort";
+"view_selectedPhotoOverview_alert_continue_button" = "Delete";
+
+// MARK: - Imprint & Privacy
+"view_imprintPrivacy_privacy_title" = "Privacy";
+"view_imprintPrivacy_privacy_text" = "The app does not collect or send personal data in any way.";
+
+"view_imprintPrivacy_imprint_title" = "Imprint";
+"view_imprintPrivacy_imprint_sectionTitle_contact" = "Contact";
+"view_imprintPrivacy_imprint_phone" = "Phone: ";
+"view_imprintPrivacy_imprint_fax" = "Fax: ";
+"view_imprintPrivacy_imprint_email" = "E-Mail: ";
+"view_imprintPrivacy_imprint_website" = "Website: ";
+
+"view_imprintPrivacy_imprint_sectionTitle_company" = "Corporate";
+"view_imprintPrivacy_imprint_company" = "Company";
+"view_imprintPrivacy_imprint_leader" = "Managing Directors";
+"view_imprintPrivacy_imprint_adress" = "Adress";
+"view_imprintPrivacy_imprint_adress_city" = "Nuremberg";
+"view_imprintPrivacy_imprint_adress_country" = "Germany";
+"view_imprintPrivacy_imprint_adressCompany" = "Headquarters";
+"view_imprintPrivacy_imprint_registereintrag" = "Commercial register";
+"view_imprintPrivacy_imprint_umsatzsteuerNr" = "VAT ID";

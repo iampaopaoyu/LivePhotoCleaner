@@ -1,0 +1,87 @@
+/* 
+  Localizable.strings
+  LivePhotoCleaner
+
+  Created by Marco Schillinger on 01.07.21.
+  
+*/
+
+"view_appSettings_done" = "Fertig";
+"view_appSettings_navigation_title" = "Einstellungen";
+
+"view_appSettings_info_section_header" = "Informationen";
+
+"view_appSettings_settings_section_header" = "Einstellungen";
+"view_appSettings_settings_delete" = "Originalbilder in Ordner \"Zuletzt gelöscht\" bewegen";
+"view_appSettings_settings_addToAlbum" = "Hinzufügen zu Album \"LivePhotoCleaner\"";
+"view_appSettings_settings_loadICloud" = "iCloud Fotos laden";
+
+"view_appSettings_photoAccess_openSettings" = "Einstellungen ändern";
+"view_appSettings_photoAccess_adjustSelection" = "Ausgewählte Bilder ändern";
+"view_appSettings_photoAccess_adjustSelection_warning" = "Achtung! Die Zugehörigkeit zu Alben kann bei eingeschränktem Zugirff nicht für die neuen Bilder beibehalten werden! Jegliche Zuordnung wird aufgehoben!";
+
+"view_appSettings_appInfo_imprint" = "Impressum und Datenschutz";
+"view_appSettings_appInfo_footer_version" = "Version";
+
+"view_appSettings_accessLevelDescription_notDetermined" = "Berechtigung wurde noch nicht definiert.";
+"view_appSettings_accessLevelDescription_restricted" = "Berechtigung verweigert und kann nicht freigeschalten werden.";
+"view_appSettings_accessLevelDescription_denied" = "Die Berechtigungen zum Zugriff auf die Fotobibliothek wurde verweigert.";
+"view_appSettings_accessLevelDescription_authorized" = "Die App hat vollständigen Zugriff auf die Fotobibliothek.";
+"view_appSettings_accessLevelDescription_limited" = "Die App hat eingeschränkten Zugriff auf die Fotobibliothek.";
+"view_appSettings_accessLevelDescription_unknown" = "Ein Fehler ist aufgetreten. Das derzeitige Zugriffslevel konnte nicht bestimmt werden.";
+
+// MARK: - Photo Overview
+"view_photoOverview_navigation_title" = "Fotos wählen";
+"view_photoOverview_checkButton" = "Auswahl prüfen";
+"view_photoOverview_noLivePhotos" = "Keine Live Photos gefunden!";
+"view_photoOverview_livePhotosNormal" = "Unbearbeitete Live Photos";
+"view_photoOverview_livePhotosEdited" = "Bearbeitete Live Photos";
+"view_photoOverview_editLostWarning" = "Die Bearbeitung geht beim Bereinigen verloren.";
+"view_photoOverview_selectAll" = "Alle auswählen";
+"view_photoOverview_deselectAll" = "Auswahl aufheben";
+"view_photoOverview_icloudLoadAlert_title" = "Laden von Bildern fehlgeschlagen";
+"view_photoOverview_icloudLoadAlert_text" = "Es war nicht möglich, Bilder von iCloud zu laden. Manche Bilder werden eventuell nicht oder nur in reduzierter Auflösung angezeigt.";
+"view_photoOverview_icloudLoadAlert_ok" = "Ok";
+
+// MARK: - Selected photo Overview
+"view_selectedPhotoOverview_navigation_title" = "Auswahl prüfen";
+"view_selectedPhotoOverview_startButton" = "Bereinigen";
+"view_selectedPhotoOverview_freedSpace_active" = "Das Bereinigen wird etwa %@ MB Speicher freigeben nachdem die Bilder aus dem \"Zuletzt gelöscht\" Ordner entfernt wurden."; // TOD eng
+"view_selectedPhotoOverview_freedSpace_inactive" = "Es wird kein Speicher freigegeben, da das Bewegen der Originalbilder in den Ordner \"Zuletzt gelöscht\" in den Einstellungen deaktiviert ist."; // TODO eng
+
+// MARK: Selected photo Overview - execution
+"view_selectedPhotoOverview_alert_error_title" = "Fehler";
+"view_selectedPhotoOverview_alert_error_message" = "Ein Fehler ist aufgetreten und Bilder konnten nicht gespeichert werden: ";
+"view_selectedPhotoOverview_alert_error_dismissButton" = "OK";
+
+"view_selectedPhotoOverview_alert_success_title" = "Abgeschlossen";
+"view_selectedPhotoOverview_alert_success_message" = "Die Live Photos wurden erfolgreich dupliziert!";
+"view_selectedPhotoOverview_alert_success_button" = "OK";
+
+"view_selectedPhotoOverview_alert_warning_title" = "Warnung";
+"view_selectedPhotoOverview_alert_warning_message" = "Es wurden %d editierte Live Photos ausgewählt.\nDie Änderungen an diesen Photos können nicht übertragen werden und gehen verloren.";
+"view_selectedPhotoOverview_alert_cancel_button" = "Abbrechen";
+"view_selectedPhotoOverview_alert_continue_button" = "Löschen";
+
+// MARK: - Imprint & Privacy
+"view_imprintPrivacy_privacy_title" = "Datenschutz";
+"view_imprintPrivacy_privacy_text" = "Durch die App werden keinerlei persönliche Daten gesammelt oder übertragen.";
+
+"view_imprintPrivacy_imprint_title" = "Impressum";
+
+"view_imprintPrivacy_imprint_sectionTitle_contact" = "Kontakt";
+"view_imprintPrivacy_imprint_phone" = "Telefon:";
+"view_imprintPrivacy_imprint_fax" = "Telefax:";
+"view_imprintPrivacy_imprint_email" = "E-Mail:";
+"view_imprintPrivacy_imprint_website" = "Website:";
+
+"view_imprintPrivacy_imprint_sectionTitle_company" = "Gesellschaft";
+"view_imprintPrivacy_imprint_company" = "Firma";
+"view_imprintPrivacy_imprint_leader" = "Geschäftsführer";
+"view_imprintPrivacy_imprint_adress" = "Adresse";
+"view_imprintPrivacy_imprint_adress_city" = "Nürnberg";
+"view_imprintPrivacy_imprint_adress_country" = "Deutschland";
+"view_imprintPrivacy_imprint_adressCompany" = "Sitz der Gesellschaft";
+"view_imprintPrivacy_imprint_registereintrag" = "Registereintrag";
+"view_imprintPrivacy_imprint_umsatzsteuerNr" = "Umsatzsteuer-Ident-Nummer";
+
