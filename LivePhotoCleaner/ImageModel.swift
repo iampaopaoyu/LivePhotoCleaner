@@ -15,6 +15,8 @@ class ImageModel: NSObject, ObservableObject {
 
     var logger = Logger()
 
+    var didShowiCloudAlertError = false
+
     @Published var approxFreedSpace = 0.0
     @Published var images = [CustomImage]()
     @Published var editedImages = [CustomImage]()
@@ -39,6 +41,8 @@ Wenn die App während dem Duplizieren beendet wird, wird der Vorgang dennoch for
     var imageIndexInformation = [String: (imagesIndex: Int?, editedImagesIndex: Int?, selectedImagesIndex: Int?)]()
 
     var assetsWithError = [PHAsset]()
+
+
 
     override init() {
         super.init()
@@ -169,7 +173,8 @@ Wenn die App während dem Duplizieren beendet wird, wird der Vorgang dennoch for
         if allowIcloudImages {
             logger.info("Adding progress handler for icloud images")
             option.progressHandler = { (progress, error, stop, additionalInfo) in
-                if let error = error, self.alert != nil {
+                if let error = error, self.alert != nil, !self.didShowiCloudAlertError {
+                    self.didShowiCloudAlertError = true
                     self.alert = AlertItem(title: "Loading images failed",
                                            message: String(format: NSLocalizedString("view_photoOverview_icloudLoadAlert_text", comment: ""), "\n", error.localizedDescription),
                                            dismissOnly: true,

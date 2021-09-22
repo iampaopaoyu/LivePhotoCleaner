@@ -17,7 +17,7 @@ struct PhotoOverview: View {
     private var buttonTextPadding: CGFloat = 4
 
     // model
-    @ObservedObject var imageModel = ImageModel()
+    @StateObject var imageModel = ImageModel()
 
     // App state
     @State private var presentSettingsSheet: Bool = false
@@ -79,6 +79,9 @@ struct PhotoOverview: View {
                 .cornerRadius(20)
                 .shadow(color: Color.black.opacity(0.2), radius: 20, x: 0, y: 20)
                 .isHidden(imageModel.selectedImages.isEmpty, remove: true)
+            }
+            .onAppear {
+                imageModel.didShowiCloudAlertError = false
             }
             .navigationBarItems(trailing: getNavigationBarTrailing())
             .navigationBarTitle(Text("view_photoOverview_navigation_title"))
