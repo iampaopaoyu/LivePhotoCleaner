@@ -42,7 +42,8 @@ Wenn die App während dem Duplizieren beendet wird, wird der Vorgang dennoch for
 
     var assetsWithError = [PHAsset]()
 
-
+    private var activeRequests = Set<PHImageRequestID>()
+    private var fetchAllowed = true
 
     override init() {
         super.init()
@@ -136,6 +137,7 @@ Wenn die App während dem Duplizieren beendet wird, wird der Vorgang dennoch for
     /// The fetched images are added to the arrays async.
     func fetchAllPhotos() {
         self.logger.info("FetchAll started")
+        fetchAllowed = true
         let allPhotosOptions = PHFetchOptions()
         allPhotosOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: true)]
         allPhotosOptions.predicate = NSPredicate(
@@ -175,7 +177,7 @@ Wenn die App während dem Duplizieren beendet wird, wird der Vorgang dennoch for
             option.progressHandler = { (progress, error, stop, additionalInfo) in
                 if let error = error, self.alert != nil, !self.didShowiCloudAlertError {
                     self.didShowiCloudAlertError = true
-                    self.alert = AlertItem(title: "Loading images failed",
+                    self.alert = AlertItem(title: NSLocalizedString("view_photoOverview_icloudLoadAlert_title", comment: ""),
                                            message: String(format: NSLocalizedString("view_photoOverview_icloudLoadAlert_text", comment: ""), "\n", error.localizedDescription),
                                            dismissOnly: true,
                                            dismissButton: ("Ok", { self.alert = nil }))
@@ -186,9 +188,10 @@ Wenn die App während dem Duplizieren beendet wird, wird der Vorgang dennoch for
         }
 
         for index in 0..<assets.count {
+            if !fetchAllowed { break }
             self.logger.log("\(assets[index].localIdentifier)")
 
-            manager.requestImage(for: assets[index],
+            let requestId = manager.requestImage(for: assets[index],
                                     targetSize: CGSize(width: 500, height: 500),
                                     contentMode: .aspectFit,
                                     options: option,
@@ -204,14 +207,36 @@ Wenn die App während dem Duplizieren beendet wird, wird der Vorgang dennoch for
                     }
                     if key == "0" && !allowIcloudImages {
                         self.logger.info("Cloud image key is 0, will return from function as cloud image download is not allowed.")
+                        self.alert = AlertItem(title: "view_photoOverview_enableIcloudLoadAlert_title",
+                                  message: "view_photoOverview_enableIcloudLoadAlert_text",
+                                  dismissOnly: false,
+                                  primaryButton: ("view_photoOverview_enableIcloudLoadAlert_abort", { self.alert = nil }),
+                                  secondaryButton: ("view_photoOverview_enableIcloudLoadAlert_load", {
+                                    self.fetchAllowed = false
+                                    for id in self.activeRequests {
+                                        manager.cancelImageRequest(id)
+                                        self.images.removeAll()
+                                        self.editedImages.removeAll()
+                                        self.selectedImages.removeAll()
+                                        UserDefaults.standard.set(true, forKey: Constants.includeIcloudImages)
+                                        self.fetchAllPhotos()
+                                    }
+                                  }))
                         return
                     }
                 }
 
                 if let res = result {
                     self.createAndAddImage(assets[index], res)
+                    if let degraded = info?["PHImageResultIsDegradedKey"] as? NSNumber, let id = info?["PHImageResultRequestIDKey"] as? NSNumber {
+                        if !degraded.boolValue {
+                            self.logger.info("removing id \(id)")
+                        }
+                    }
                 }
             })
+            logger.info("adding id \(requestId)")
+            activeRequests.insert(requestId)
         }
         //        }
         self.logger.info("FetchAll finished")
@@ -242,7 +267,7 @@ Wenn die App während dem Duplizieren beendet wird, wird der Vorgang dennoch for
             deleteApproved()
         } else {
             alert = AlertItem(title: "view_selectedPhotoOverview_alert_warning_title",
-                              message: String(format: NSLocalizedString("view_selectedPhotoOverview_alert_warning_message", comment: ""), selectedEditedItemsCount),
+                              message: String(format: "view_selectedPhotoOverview_alert_warning_message", selectedEditedItemsCount),
                               dismissOnly: false,
                               primaryButton: ("view_selectedPhotoOverview_alert_cancel_button", action: {}),
                               secondaryButton: ("view_selectedPhotoOverview_alert_continue_button", action: deleteApproved))

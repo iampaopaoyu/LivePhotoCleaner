@@ -44,6 +44,11 @@
 "view_photoOverview_icloudLoadAlert_text" = "The App was unable to load one or more image from iCloud. Some images are maybe not shown at all or not shown in full resolution.";
 "view_photoOverview_icloudLoadAlert_ok" = "Ok";
 
+"view_photoOverview_enableIcloudLoadAlert_title" = "Image in iCloud detected";
+"view_photoOverview_enableIcloudLoadAlert_text" = "At least one image is only stored in iCloud and will not be loaded as it is deactivated in the app settings.\nLoad all images from iCloud?";
+"view_photoOverview_enableIcloudLoadAlert_abort" = "Abort";
+"view_photoOverview_enableIcloudLoadAlert_load" = "Load";
+
 // MARK: - Selected photo Overview
 "view_selectedPhotoOverview_navigation_title" = "Check selection";
 "view_selectedPhotoOverview_startButton" = "Clean selected";

@@ -43,6 +43,11 @@
 "view_photoOverview_icloudLoadAlert_text" = "Es war nicht möglich, Bilder von iCloud zu laden. Manche Bilder werden eventuell nicht oder nur in reduzierter Auflösung angezeigt.";
 "view_photoOverview_icloudLoadAlert_ok" = "Ok";
 
+"view_photoOverview_enableIcloudLoadAlert_title" = "Bilder in iCloud gefunden";
+"view_photoOverview_enableIcloudLoadAlert_text" = "Mindestens ein Bild ist nur in iCloud gespeichert und wird basierend auf den aktuellen Einstellungen nicht geladen. \nSollen Bilder aus iCloud geladen werden?";
+"view_photoOverview_enableIcloudLoadAlert_abort" = "Abbrechen";
+"view_photoOverview_enableIcloudLoadAlert_load" = "Laden";
+
 // MARK: - Selected photo Overview
 "view_selectedPhotoOverview_navigation_title" = "Auswahl prüfen";
 "view_selectedPhotoOverview_startButton" = "Bereinigen";
