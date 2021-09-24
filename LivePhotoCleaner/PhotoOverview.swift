@@ -79,6 +79,7 @@ struct PhotoOverview: View {
                 .cornerRadius(20)
                 .shadow(color: Color.black.opacity(0.2), radius: 20, x: 0, y: 20)
                 .isHidden(imageModel.selectedImages.isEmpty, remove: true)
+                .padding(.bottom)
             }
             .onAppear {
                 imageModel.didShowiCloudAlertError = false
