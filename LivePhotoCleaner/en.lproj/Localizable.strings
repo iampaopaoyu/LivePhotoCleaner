@@ -37,7 +37,7 @@
 "view_photoOverview_noLivePhotos" = "No live photos found.";
 "view_photoOverview_livePhotosNormal" = "Live photos (not edited)";
 "view_photoOverview_livePhotosEdited" = "Live photos (edited)";
-"view_photoOverview_editLostWarning" = "Only the original photo without any edits will be saved.";
+"view_photoOverview_editLostWarning" = "Beware, we detected edits (dynamic or creative effects like loops, bounce, filters, etc) on the pictures below. This version of LivePhotoCleaner can only clean the original images.";
 "view_photoOverview_selectAll" = "Select all";
 "view_photoOverview_deselectAll" = "Deselect all";
 "view_photoOverview_icloudLoadAlert_title" = "Loading images failed";

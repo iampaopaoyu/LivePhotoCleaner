@@ -36,7 +36,7 @@
 "view_photoOverview_noLivePhotos" = "Keine Live Photos gefunden!";
 "view_photoOverview_livePhotosNormal" = "Unbearbeitete Live Photos";
 "view_photoOverview_livePhotosEdited" = "Bearbeitete Live Photos";
-"view_photoOverview_editLostWarning" = "Die Bearbeitung geht beim Bereinigen verloren.";
+"view_photoOverview_editLostWarning" = "Achtung, bei den nachfolgenden Bildern wurden Änderungen (Kreative Effekte wie Schleifen, Filter, ...) festgestellt. Diese Version der App kann nur die unveränderten Bilder speichern.";
 "view_photoOverview_selectAll" = "Alle auswählen";
 "view_photoOverview_deselectAll" = "Auswahl aufheben";
 "view_photoOverview_icloudLoadAlert_title" = "Laden von Bildern fehlgeschlagen";

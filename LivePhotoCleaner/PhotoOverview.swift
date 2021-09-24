@@ -57,10 +57,13 @@ struct PhotoOverview: View {
                             }
                         }
                         if imageModel.editedImages.count > 0 {
-                            Section(header: getSectionHeader(title: "view_photoOverview_livePhotosEdited",
-                                                             selectAllAction: imageModel.selectAllEditedImages,
-                                                             deselectAllAction: imageModel.deselectAllEditedImages).padding(.top),
-                                    footer: Text("view_photoOverview_editLostWarning")) {
+                            Section(header:
+                                        VStack {
+                                            getSectionHeader(title: "view_photoOverview_livePhotosEdited",
+                                                                 selectAllAction: imageModel.selectAllEditedImages,
+                                                             deselectAllAction: imageModel.deselectAllEditedImages).padding(.top)
+                                            Text("view_photoOverview_editLostWarning")
+                                        }) {
                                 ForEach(imageModel.editedImages) { image in
                                     getImageView(image)
                                 }
