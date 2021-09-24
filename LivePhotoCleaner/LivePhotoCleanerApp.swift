@@ -21,6 +21,16 @@ struct LivePhotoCleanerApp: App {
 
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
 
+    init() {
+            // this could be read from a plist file as well, there should be no difference in functionality
+            // as we've got our Keys enum we set the defaults here to make sure we do not have different string values
+        UserDefaults.standard.register(defaults: [
+            Constants.includeIcloudImages: false,
+            Constants.deleteLivePhotos: true,
+            Constants.moveToAlbum: true,
+        ])
+    }
+
     var body: some Scene {
         WindowGroup {
             PhotoOverview()
