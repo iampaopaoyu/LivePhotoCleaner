@@ -574,14 +574,13 @@ extension ImageModel: PHPhotoLibraryChangeObserver {
             return
         }
 
-        let fetchResultChangeDetails = changeInstance.changeDetails(for: self.fetchResults!)
-        guard fetchResultChangeDetails != nil else {
+        guard let fetchResultChangeDetails = changeInstance.changeDetails(for: self.fetchResults!) else {
             logger.info("No change in fetchResultChangeDetails")
             return;
         }
         logger.info("Contains changes - updating")
 
-        if !(fetchResultChangeDetails?.insertedObjects.isEmpty ?? true) {
+        if !(fetchResultChangeDetails.insertedObjects.isEmpty) {
             // add
 
             let allowCloud = UserDefaults.standard.bool(forKey: Constants.includeIcloudImages)
@@ -589,7 +588,7 @@ extension ImageModel: PHPhotoLibraryChangeObserver {
             let option = PHImageRequestOptions()
             option.isNetworkAccessAllowed = allowCloud
 
-            for asset in fetchResultChangeDetails!.insertedObjects {
+            for asset in fetchResultChangeDetails.insertedObjects {
                 manager.requestImage(for: asset, targetSize: CGSize(width: 500, height: 500), contentMode: .aspectFit, options: option, resultHandler: { (result, info) -> Void in
                     if let inf = info, let key = inf[PHImageResultIsInCloudKey] as? String {
                         self.logger.info("Cloud image key: \(key)")
@@ -611,9 +610,9 @@ extension ImageModel: PHPhotoLibraryChangeObserver {
         //            // change
         //        }
 
-        if !(fetchResultChangeDetails?.removedObjects.isEmpty ?? true) {
+        if !(fetchResultChangeDetails.removedObjects.isEmpty) {
             // deleted
-            for asset in fetchResultChangeDetails!.removedObjects {
+            for asset in fetchResultChangeDetails.removedObjects {
                 DispatchQueue.main.async {
                     self.images.removeAll(where: { asset.localIdentifier == $0.id })
                     self.selectedImages.removeAll(where: { asset.localIdentifier == $0.id })
@@ -623,7 +622,14 @@ extension ImageModel: PHPhotoLibraryChangeObserver {
             }
         }
 
-        let fetchAfterChanges = fetchResultChangeDetails?.fetchResultAfterChanges
+        if fetchResultChangeDetails.removedObjects.isEmpty &&
+            fetchResultChangeDetails.changedObjects.isEmpty &&
+            fetchResultChangeDetails.insertedObjects.isEmpty {
+            // this might indicate, that we had an unauthorized fetch before
+            fetchAllPhotos()
+        }
+
+        let fetchAfterChanges = fetchResultChangeDetails.fetchResultAfterChanges
         self.fetchResults = fetchAfterChanges
         logger.info("Contains changes - updating finished")
     }

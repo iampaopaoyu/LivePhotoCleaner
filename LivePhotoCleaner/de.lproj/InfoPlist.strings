@@ -1,0 +1,10 @@
+/* 
+  InfoPlist.strings
+  LivePhotoCleaner
+
+  Created by Marco Schillinger on 01.10.21.
+  
+*/
+
+"NSPhotoLibraryAddUsageDescription" = "LivePhotoCleaner möchte Fotos auf deinem Gerät speichern";
+"NSPhotoLibraryUsageDescription" = "LivePhotoCleaner möchte auf deine Fotos zugreifen. Die Zugehörigkeit von Bildern zu Alben kann nur dann beibehalten werden, wenn Zugriff auf alle Fotos gewährt wird.";

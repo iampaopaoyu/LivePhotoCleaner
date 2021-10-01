@@ -12,6 +12,7 @@
 		9AE509CE252371A70015AE53 /* PhotoOverview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AE509CD252371A70015AE53 /* PhotoOverview.swift */; };
 		9AE509D0252371A80015AE53 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9AE509CF252371A80015AE53 /* Assets.xcassets */; };
 		9AE509D3252371A80015AE53 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9AE509D2252371A80015AE53 /* Preview Assets.xcassets */; };
+		A90BC01A2706D813009AA3BF /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = A90BC01C2706D813009AA3BF /* InfoPlist.strings */; };
 		A947EFF026C6703C00A40B2B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A947EFEF26C6703C00A40B2B /* GoogleService-Info.plist */; };
 		A954922725B1B88C00E6DCF2 /* SelectedImagesOverview.swift in Sources */ = {isa = PBXBuildFile; fileRef = A954922625B1B88C00E6DCF2 /* SelectedImagesOverview.swift */; };
 		A957397525B5B5DE00D7E4D4 /* DoubleExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A957397425B5B5DE00D7E4D4 /* DoubleExtension.swift */; };
@@ -37,6 +38,8 @@
 		9AE509CF252371A80015AE53 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		9AE509D2252371A80015AE53 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		9AE509D4252371A80015AE53 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A90BC01B2706D813009AA3BF /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		A90BC01D2706D820009AA3BF /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		A92B5C4126F4AB89004C80C6 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		A947EFEF26C6703C00A40B2B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A954922625B1B88C00E6DCF2 /* SelectedImagesOverview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectedImagesOverview.swift; sourceTree = "<group>"; };
@@ -98,6 +101,7 @@
 				A9B01D6625AD9F3E00D87CBA /* Styles */,
 				A957396F25B58F3300D7E4D4 /* Views */,
 				A9B348B6268DAA1500035FB8 /* Localizable.strings */,
+				A90BC01C2706D813009AA3BF /* InfoPlist.strings */,
 			);
 			path = LivePhotoCleaner;
 			sourceTree = "<group>";
@@ -228,6 +232,7 @@
 				A947EFF026C6703C00A40B2B /* GoogleService-Info.plist in Resources */,
 				A9B348B4268DAA1500035FB8 /* Localizable.strings in Resources */,
 				9AE509D0252371A80015AE53 /* Assets.xcassets in Resources */,
+				A90BC01A2706D813009AA3BF /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -280,6 +285,15 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
+		A90BC01C2706D813009AA3BF /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A90BC01B2706D813009AA3BF /* en */,
+				A90BC01D2706D820009AA3BF /* de */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
 		A9B348B6268DAA1500035FB8 /* Localizable.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -416,10 +430,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 25;
+				CURRENT_PROJECT_VERSION = 2;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_ASSET_PATHS = "\"LivePhotoCleaner/Preview Content\"";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = UFQ84588AE;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = LivePhotoCleaner/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
@@ -427,6 +441,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = de.mathema.livephotocleaner;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -440,9 +455,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 25;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_ASSET_PATHS = "\"LivePhotoCleaner/Preview Content\"";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = UFQ84588AE;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = LivePhotoCleaner/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
@@ -450,6 +465,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = de.mathema.livephotocleaner;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;

@@ -17,7 +17,7 @@
 	<key>CFBundlePackageType</key>
 	<string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0</string>
+	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
@@ -25,9 +25,9 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>LivePhotoCleaner möchte Fotos auf deinem Gerät speichern</string>
+	<string></string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>LivePhotoCleaner möchte auf deine Fotos zugreifen. Die Zugehörigkeit von Bildern zu Alben kann nur dann beibehalten werden, wenn Zugriff auf alle Fotos gewährt wird.</string>
+	<string></string>
 	<key>PHPhotoLibraryPreventAutomaticLimitedAccessAlert</key>
 	<true/>
 	<key>UIApplicationSceneManifest</key>

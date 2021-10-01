@@ -1,0 +1,10 @@
+/* 
+  InfoPlist.strings
+  LivePhotoCleaner
+
+  Created by Marco Schillinger on 01.10.21.
+  
+*/
+
+"NSPhotoLibraryAddUsageDescription" = "LivePhotoCleaner wants to add photos to your library.";
+"NSPhotoLibraryUsageDescription" = "LivePhotoCleaner needs to access your photos. Making sure that duplicated photos are contained in the same albums as before is only possible if full access to photos is given.";
