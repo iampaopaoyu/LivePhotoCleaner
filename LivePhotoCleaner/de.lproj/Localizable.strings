@@ -51,8 +51,8 @@
 // MARK: - Selected photo Overview
 "view_selectedPhotoOverview_navigation_title" = "Auswahl prüfen";
 "view_selectedPhotoOverview_startButton" = "Bereinigen";
-"view_selectedPhotoOverview_freedSpace_active" = "Das Bereinigen wird etwa %@ MB Speicher freigeben nachdem die Bilder aus dem \"Zuletzt gelöscht\" Ordner entfernt wurden."; // TOD eng
-"view_selectedPhotoOverview_freedSpace_inactive" = "Es wird kein Speicher freigegeben, da das Bewegen der Originalbilder in den Ordner \"Zuletzt gelöscht\" in den Einstellungen deaktiviert ist."; // TODO eng
+"view_selectedPhotoOverview_freedSpace_active" = "Das Bereinigen wird etwa %@ MB Speicher freigeben nachdem die Bilder aus dem \"Zuletzt gelöscht\" Ordner entfernt wurden.";
+"view_selectedPhotoOverview_freedSpace_inactive" = "Es wird kein Speicher freigegeben, da das Bewegen der Originalbilder in den Ordner \"Zuletzt gelöscht\" in den Einstellungen deaktiviert ist.";
 
 // MARK: Selected photo Overview - execution
 "view_selectedPhotoOverview_alert_error_title" = "Fehler";

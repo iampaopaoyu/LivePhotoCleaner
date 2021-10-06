@@ -267,7 +267,7 @@ Wenn die App während dem Duplizieren beendet wird, wird der Vorgang dennoch for
             deleteApproved()
         } else {
             alert = AlertItem(title: "view_selectedPhotoOverview_alert_warning_title",
-                              message: String(format: "view_selectedPhotoOverview_alert_warning_message", selectedEditedItemsCount),
+                              message: String(format: NSLocalizedString("view_selectedPhotoOverview_alert_warning_message", comment: ""), selectedEditedItemsCount),
                               dismissOnly: false,
                               primaryButton: ("view_selectedPhotoOverview_alert_cancel_button", action: {}),
                               secondaryButton: ("view_selectedPhotoOverview_alert_continue_button", action: deleteApproved))
