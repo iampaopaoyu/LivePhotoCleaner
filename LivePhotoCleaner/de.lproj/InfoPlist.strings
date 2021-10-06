@@ -7,4 +7,4 @@
 */
 
 "NSPhotoLibraryAddUsageDescription" = "LivePhotoCleaner möchte Fotos auf deinem Gerät speichern";
-"NSPhotoLibraryUsageDescription" = "LivePhotoCleaner möchte auf deine Fotos zugreifen. Die Zugehörigkeit von Bildern zu Alben kann nur dann beibehalten werden, wenn Zugriff auf alle Fotos gewährt wird.";
+"NSPhotoLibraryUsageDescription" = "LivePhotoCleaner möchte auf deine Fotos zugreifen. Der Zugriff ist notwendig, damit eine Liste der vorhandenen Live Photos angezeigt und daraus eine Auswahl getroffen werden kann. Die Zugehörigkeit von Bildern zu Alben kann nur dann beibehalten werden, wenn Zugriff auf alle Fotos gewährt wird.";

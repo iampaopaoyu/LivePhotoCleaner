@@ -7,4 +7,4 @@
 */
 
 "NSPhotoLibraryAddUsageDescription" = "LivePhotoCleaner wants to add photos to your library.";
-"NSPhotoLibraryUsageDescription" = "LivePhotoCleaner needs to access your photos. Making sure that duplicated photos are contained in the same albums as before is only possible if full access to photos is given.";
+"NSPhotoLibraryUsageDescription" = "LivePhotoCleaner needs to access your photos. Access is needed to show a list of all live photos and allow selecting live photos of that list. Making sure that duplicated photos are contained in the same albums as before is only possible if full access to photos is allowed.";
