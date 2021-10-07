@@ -1,0 +1,8 @@
+theme: minima
+title: Live Photo Cleaner
+description: Remove the "live" part of photos on iOS
+email: mobile@mathema.de
+author: MATHEMA GmbH
+header_pages:
+  - privacy.md
+  - imprint.md
