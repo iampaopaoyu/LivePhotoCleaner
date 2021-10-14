@@ -191,50 +191,7 @@ Wenn die App während dem Duplizieren beendet wird, wird der Vorgang dennoch for
             if !fetchAllowed { break }
             self.logger.log("\(assets[index].localIdentifier)")
 
-            let requestId = manager.requestImage(for: assets[index],
-                                    targetSize: CGSize(width: 500, height: 500),
-                                    contentMode: .aspectFit,
-                                    options: option,
-                                    resultHandler: { (result, info) -> Void in
-                if let inf = info, let key = inf[PHImageResultIsInCloudKey] as? String {
-                    self.logger.info("Cloud image key: \(key)")
-
-                    if !self.images.contains(where: { $0.id == assets[index].localIdentifier }) {
-                        // maybe replace this image with the placeholder only in case it is not yet in any list
-                        // it seems as if the placeholder is in general present, but the image is not loaded correctly. so we add this image only if there is none yet.
-                        // this might result in no high-res image, so another rework might be needed
-                        self.createAndAddImage(assets[index], UIImage(systemName: "photo") ?? UIImage())
-                    }
-                    if key == "0" && !allowIcloudImages {
-                        self.logger.info("Cloud image key is 0, will return from function as cloud image download is not allowed.")
-                        self.alert = AlertItem(title: "view_photoOverview_enableIcloudLoadAlert_title",
-                                  message: "view_photoOverview_enableIcloudLoadAlert_text",
-                                  dismissOnly: false,
-                                  primaryButton: ("view_photoOverview_enableIcloudLoadAlert_abort", { self.alert = nil }),
-                                  secondaryButton: ("view_photoOverview_enableIcloudLoadAlert_load", {
-                                    self.fetchAllowed = false
-                                    for id in self.activeRequests {
-                                        manager.cancelImageRequest(id)
-                                        self.images.removeAll()
-                                        self.editedImages.removeAll()
-                                        self.selectedImages.removeAll()
-                                        UserDefaults.standard.set(true, forKey: Constants.includeIcloudImages)
-                                        self.fetchAllPhotos()
-                                    }
-                                  }))
-                        return
-                    }
-                }
-
-                if let res = result {
-                    self.createAndAddImage(assets[index], res)
-                    if let degraded = info?["PHImageResultIsDegradedKey"] as? NSNumber, let id = info?["PHImageResultRequestIDKey"] as? NSNumber {
-                        if !degraded.boolValue {
-                            self.logger.info("removing id \(id)")
-                        }
-                    }
-                }
-            })
+            let requestId = requestImage(manager, assets[index], option, allowIcloudImages)
             logger.info("adding id \(requestId)")
             activeRequests.insert(requestId)
         }
@@ -303,16 +260,16 @@ Wenn die App während dem Duplizieren beendet wird, wird der Vorgang dennoch for
                 }
                 self.logger.log("Requesting resource data")
 
-                //
                 let options = PHAssetResourceRequestOptions()
                 options.isNetworkAccessAllowed = UserDefaults.standard.bool(forKey: Constants.includeIcloudImages)
-                PHAssetResourceManager.default().requestData(for: resourcePart, options: options,
+                PHAssetResourceManager.default().requestData(for: resourcePart,
+                                                                options: options,
                                                                 dataReceivedHandler: { data in
                     self.imageCleanData[asset.localIdentifier]?[resourcePart.type]?.data.append(data)
                 },
                                                                 completionHandler: { error in
                     if let err = error {
-                        self.logger.error("\(err.localizedDescription)")
+                        self.logger.error("Recieved error on data request \(err.localizedDescription)")
                     } else {
                         self.logger.log("Received complete data of type \(resourcePart.type.rawValue).")
                         self.imageCleanData[asset.localIdentifier]?[resourcePart.type]?.complete = true
@@ -481,6 +438,53 @@ Wenn die App während dem Duplizieren beendet wird, wird der Vorgang dennoch for
         }
         return true
     }
+
+    fileprivate func requestImage(_ manager: PHImageManager, _ asset: PHAsset, _ option: PHImageRequestOptions, _ allowIcloudImages: Bool) -> PHImageRequestID {
+        manager.requestImage(for: asset,
+                                       targetSize: CGSize(width: 500, height: 500),
+                                       contentMode: .aspectFit,
+                                       options: option,
+                                       resultHandler: { (result, info) -> Void in
+            if let inf = info, let key = inf[PHImageResultIsInCloudKey] as? String {
+                self.logger.info("Cloud image key: \(key)")
+
+                if !self.images.contains(where: { $0.id == asset.localIdentifier }) {
+                    // maybe replace this image with the placeholder only in case it is not yet in any list
+                    // it seems as if the placeholder is in general present, but the image is not loaded correctly. so we add this image only if there is none yet.
+                    // this might result in no high-res image, so another rework might be needed
+                    self.createAndAddImage(asset, UIImage(systemName: "photo") ?? UIImage())
+                }
+                if key == "0" && !allowIcloudImages {
+                    self.logger.info("Cloud image key is 0, will return from function as cloud image download is not allowed.")
+                    self.alert = AlertItem(title: "view_photoOverview_enableIcloudLoadAlert_title",
+                                           message: "view_photoOverview_enableIcloudLoadAlert_text",
+                                           dismissOnly: false,
+                                           primaryButton: ("view_photoOverview_enableIcloudLoadAlert_abort", { self.alert = nil }),
+                                           secondaryButton: ("view_photoOverview_enableIcloudLoadAlert_load", {
+                        self.fetchAllowed = false
+                        for id in self.activeRequests {
+                            manager.cancelImageRequest(id)
+                            self.images.removeAll()
+                            self.editedImages.removeAll()
+                            self.selectedImages.removeAll()
+                            UserDefaults.standard.set(true, forKey: Constants.includeIcloudImages)
+                            self.fetchAllPhotos()
+                        }
+                    }))
+                    return
+                }
+            }
+
+            if let res = result {
+                self.createAndAddImage(asset, res)
+                if let degraded = info?["PHImageResultIsDegradedKey"] as? NSNumber, let id = info?["PHImageResultRequestIDKey"] as? NSNumber {
+                    if !degraded.boolValue {
+                        self.logger.info("removing id \(id)")
+                    }
+                }
+            }
+        })
+    }
 }
 
 // MARK: - Calculations
@@ -588,21 +592,13 @@ extension ImageModel: PHPhotoLibraryChangeObserver {
             let option = PHImageRequestOptions()
             option.isNetworkAccessAllowed = allowCloud
 
-            for asset in fetchResultChangeDetails.insertedObjects {
-                manager.requestImage(for: asset, targetSize: CGSize(width: 500, height: 500), contentMode: .aspectFit, options: option, resultHandler: { (result, info) -> Void in
-                    if let inf = info, let key = inf[PHImageResultIsInCloudKey] as? String {
-                        self.logger.info("Cloud image key: \(key)")
-                        //                        self.createAndAddImage(asset, UIImage(systemName: "photo") ?? UIImage())
-                        if key == "0" && !allowCloud {
-                            self.logger.info("Cloud image key is 0, will return from function as cloud image download is not allowed.")
-                            return
-                        }
-                    }
+            for index in 0..<fetchResultChangeDetails.insertedObjects.count {
+                if !fetchAllowed { break }
+                self.logger.log("\(fetchResultChangeDetails.insertedObjects[index].localIdentifier)")
 
-                    if let res = result {
-                        self.createAndAddImage(asset, res)
-                    }
-                })
+                let requestId = requestImage(manager, fetchResultChangeDetails.insertedObjects[index], option, allowCloud)
+                logger.info("adding id \(requestId)")
+                activeRequests.insert(requestId)
             }
         }
 
