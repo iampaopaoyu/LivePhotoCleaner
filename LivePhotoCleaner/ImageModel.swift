@@ -258,7 +258,10 @@ Wenn die App während dem Duplizieren beendet wird, wird der Vorgang dennoch for
             }
         }
 
-        assetsToDelete.forEach { asset in
+        var shouldContinue = true
+        for index in 0..<assetsToDelete.count {
+            if !shouldContinue { break }
+            let asset = assetsToDelete[index]
             let resources = PHAssetResource.assetResources(for: asset) // get photo component
 
             for resourcePart in resources {
@@ -275,7 +278,22 @@ Wenn die App während dem Duplizieren beendet wird, wird der Vorgang dennoch for
                     self.imageCleanData[asset.localIdentifier]?[resourcePart.type]?.data.append(data)
                 },
                                                                 completionHandler: { error in
-                    if let err = error {
+                    if let err = error as? PHPhotosError {
+                        if err.code == PHPhotosError.Code.networkAccessRequired {
+                            self.logger.error("No network access granted but needed.")
+                            shouldContinue = false
+                            DispatchQueue.main.async {
+                                self.alert = AlertItem(title: "view_photoOverview_enableIcloudLoadAlert_title",
+                                                       message: "view_photoOverview_enableIcloudLoadAlert_text",
+                                                       dismissOnly: false,
+                                                       primaryButton: ("view_photoOverview_enableIcloudLoadAlert_abort", { self.alert = nil }),
+                                                       secondaryButton: ("view_photoOverview_enableIcloudLoadAlert_load", {
+                                    self.imageCleanData.removeAll()
+                                    UserDefaults.standard.set(true, forKey: Constants.includeIcloudImages)
+                                    self.createStillPhotos(for: assetsToDelete)
+                                }))
+                            }
+                        }
                         self.logger.error("Recieved error on data request \(err.localizedDescription)")
                     } else {
                         self.logger.log("Received complete data of type \(resourcePart.type.rawValue).")
@@ -361,7 +379,6 @@ Wenn die App während dem Duplizieren beendet wird, wird der Vorgang dennoch for
                 } else {
                     self.logger.warning("No image data for current asset \(asset.localIdentifier)")
                 }
-
             }
             if UserDefaults.standard.bool(forKey: Constants.deleteLivePhotos) {
                 PHAssetChangeRequest.deleteAssets(assets as NSFastEnumeration)
@@ -501,8 +518,8 @@ extension ImageModel {
         DispatchQueue.global(qos: .userInitiated).async {
             var fileSize = 0.0
 
-            self.fetchResults?.enumerateObjects { (asset, index, stop) in
-                if selectAll || self.selectedImages.contains(where: { $0.id == asset.localIdentifier }) {
+            self.selectedImages.forEach { element in
+                if let asset = self.allAssets[element.id] {
                     PHAssetResource.assetResources(for: asset).forEach { resouce in
                         if resouce.type == .pairedVideo || resouce.type == .fullSizePairedVideo || resouce.type == .adjustmentBasePairedVideo {
                             fileSize += resouce.value(forKey: "fileSize") as? Double ?? 0
