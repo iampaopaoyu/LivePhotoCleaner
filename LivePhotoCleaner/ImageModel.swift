@@ -39,6 +39,7 @@ Wenn die App während dem Duplizieren beendet wird, wird der Vorgang dennoch for
     var imageCleanData = [String: [PHAssetResourceType : (data: Data, complete: Bool)]]()
 
     var imageIndexInformation = [String: (imagesIndex: Int?, editedImagesIndex: Int?, selectedImagesIndex: Int?)]()
+    var allAssets = [String: PHAsset]()
 
     var assetsWithError = [PHAsset]()
 
@@ -130,12 +131,14 @@ Wenn die App während dem Duplizieren beendet wird, wird der Vorgang dennoch for
             editedImages[index].selected = false
         }
         selectedEditedItemsCount = 0
-        self.selectedImages.removeAll()
+        selectedImages.removeAll()
+        allAssets.removeAll()
     }
 
     /// Tries to fetch all photos that are on the device and in cloud.
     /// The fetched images are added to the arrays async.
     func fetchAllPhotos() {
+        allAssets.removeAll()
         self.logger.info("FetchAll started")
         fetchAllowed = true
         let allPhotosOptions = PHFetchOptions()
@@ -189,7 +192,10 @@ Wenn die App während dem Duplizieren beendet wird, wird der Vorgang dennoch for
 
         for index in 0..<assets.count {
             if !fetchAllowed { break }
-            self.logger.log("\(assets[index].localIdentifier)")
+            let identifier = assets[index].localIdentifier
+            self.logger.log("\(identifier)")
+
+            allAssets[identifier] = assets[index]
 
             let requestId = requestImage(manager, assets[index], option, allowIcloudImages)
             logger.info("adding id \(requestId)")
@@ -204,8 +210,9 @@ Wenn die App während dem Duplizieren beendet wird, wird der Vorgang dennoch for
         imageCleanData.removeAll()
         assetsWithError.removeAll()
         var assetsToDelete: [PHAsset] = [PHAsset]()
-        fetchResults?.enumerateObjects { (asset, index, stop) in
-            if self.selectedImages.contains(where: { $0.id == asset.localIdentifier }) {
+
+        self.selectedImages.forEach { image in
+            if let asset = allAssets[image.id] {
                 assetsToDelete.append(asset)
             }
         }
@@ -252,9 +259,9 @@ Wenn die App während dem Duplizieren beendet wird, wird der Vorgang dennoch for
         }
 
         assetsToDelete.forEach { asset in
-            let resource = PHAssetResource.assetResources(for: asset) // get photo component
+            let resources = PHAssetResource.assetResources(for: asset) // get photo component
 
-            for resourcePart in resource {
+            for resourcePart in resources {
                 if !self.validTypesOf(resourcePart) {
                     continue
                 }
@@ -388,7 +395,7 @@ Wenn die App während dem Duplizieren beendet wird, wird der Vorgang dennoch for
 
 
     fileprivate func createAndAddImage(_ asset: PHAsset, _ res: UIImage) {
-        DispatchQueue.global(qos: .background).async {
+        DispatchQueue.global(qos: .userInitiated).async {
             //        self.logger.debug("adding asset \(asset.localIdentifier)")
             let isEdited = PHAssetResource.assetResources(for: asset).contains(where: { $0.type == .adjustmentData } )
 
@@ -594,7 +601,10 @@ extension ImageModel: PHPhotoLibraryChangeObserver {
 
             for index in 0..<fetchResultChangeDetails.insertedObjects.count {
                 if !fetchAllowed { break }
-                self.logger.log("\(fetchResultChangeDetails.insertedObjects[index].localIdentifier)")
+                let identifier = fetchResultChangeDetails.insertedObjects[index].localIdentifier
+                self.logger.log("\(identifier)")
+
+                allAssets[identifier] = fetchResultChangeDetails.insertedObjects[index]
 
                 let requestId = requestImage(manager, fetchResultChangeDetails.insertedObjects[index], option, allowCloud)
                 logger.info("adding id \(requestId)")
@@ -610,10 +620,12 @@ extension ImageModel: PHPhotoLibraryChangeObserver {
             // deleted
             for asset in fetchResultChangeDetails.removedObjects {
                 DispatchQueue.main.async {
-                    self.images.removeAll(where: { asset.localIdentifier == $0.id })
-                    self.selectedImages.removeAll(where: { asset.localIdentifier == $0.id })
-                    self.editedImages.removeAll(where: { asset.localIdentifier == $0.id })
-                    self.imageIndexInformation.removeValue(forKey: asset.localIdentifier)
+                    let identifier = asset.localIdentifier
+                    self.images.removeAll(where: { identifier == $0.id })
+                    self.selectedImages.removeAll(where: { identifier == $0.id })
+                    self.editedImages.removeAll(where: { identifier == $0.id })
+                    self.imageIndexInformation.removeValue(forKey: identifier)
+                    self.allAssets.removeValue(forKey: identifier)
                 }
             }
         }

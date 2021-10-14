@@ -59,8 +59,8 @@ struct SelectedImagesOverview: View {
                 action: {
                     withAnimation {
                         isCleaningHidden = false
-                        model.deleteSelectedLivePhotos()
                     }
+                    model.deleteSelectedLivePhotos()
                 },
                 label: {
                     HStack {
