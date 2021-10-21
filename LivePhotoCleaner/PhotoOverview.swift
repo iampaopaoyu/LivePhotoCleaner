@@ -52,7 +52,7 @@ struct PhotoOverview: View {
                                                              selectAllAction: imageModel.selectAllImages,
                                                              deselectAllAction: imageModel.deselectAllImages).padding(.top)) {
                                 ForEach(imageModel.images) { image in
-                                    getImageView(image)
+                                    getImageView(image, edited: false)
                                 }
                             }
                         }
@@ -60,12 +60,12 @@ struct PhotoOverview: View {
                             Section(header:
                                         VStack {
                                             getSectionHeader(title: "view_photoOverview_livePhotosEdited",
-                                                                 selectAllAction: imageModel.selectAllEditedImages,
+                                                             selectAllAction: imageModel.selectAllEditedImages,
                                                              deselectAllAction: imageModel.deselectAllEditedImages).padding(.top)
                                             Text("view_photoOverview_editLostWarning")
                                         }) {
                                 ForEach(imageModel.editedImages) { image in
-                                    getImageView(image)
+                                    getImageView(image, edited: true)
                                 }
                             }
                         }
@@ -93,7 +93,7 @@ struct PhotoOverview: View {
         .navigationViewStyle(StackNavigationViewStyle())
     }
 
-    fileprivate func getImageView(_ image: CustomImage) -> some View {
+    fileprivate func getImageView(_ image: CustomImage, edited: Bool) -> some View {
         ZStack(alignment: .bottomTrailing) {
             Image(uiImage: image.image)
                 .resizable()
