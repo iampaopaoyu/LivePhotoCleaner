@@ -12,11 +12,11 @@
 		9AE509CE252371A70015AE53 /* PhotoOverview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AE509CD252371A70015AE53 /* PhotoOverview.swift */; };
 		9AE509D0252371A80015AE53 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9AE509CF252371A80015AE53 /* Assets.xcassets */; };
 		9AE509D3252371A80015AE53 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9AE509D2252371A80015AE53 /* Preview Assets.xcassets */; };
+		A9049AC72721621F00310F53 /* PhotoDuplicatorAlertTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9049AC62721621F00310F53 /* PhotoDuplicatorAlertTypes.swift */; };
 		A90BC01A2706D813009AA3BF /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = A90BC01C2706D813009AA3BF /* InfoPlist.strings */; };
 		A947EFF026C6703C00A40B2B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A947EFEF26C6703C00A40B2B /* GoogleService-Info.plist */; };
 		A954922725B1B88C00E6DCF2 /* SelectedImagesOverview.swift in Sources */ = {isa = PBXBuildFile; fileRef = A954922625B1B88C00E6DCF2 /* SelectedImagesOverview.swift */; };
 		A957397525B5B5DE00D7E4D4 /* DoubleExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A957397425B5B5DE00D7E4D4 /* DoubleExtension.swift */; };
-		A97C94BF25C92A880049CEA4 /* CleanAlertOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A97C94BE25C92A880049CEA4 /* CleanAlertOptions.swift */; };
 		A9882F7D26C67B2A00A56F29 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = A9882F7C26C67B2A00A56F29 /* FirebaseCrashlytics */; };
 		A98C256F2719BEFC00346AC4 /* PhotoDuplicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A98C256E2719BEFC00346AC4 /* PhotoDuplicator.swift */; };
 		A98CB3FB25B1A0CA004BD4F0 /* AppSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A98CB3FA25B1A0CA004BD4F0 /* AppSettingsView.swift */; };
@@ -39,13 +39,13 @@
 		9AE509CF252371A80015AE53 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		9AE509D2252371A80015AE53 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		9AE509D4252371A80015AE53 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A9049AC62721621F00310F53 /* PhotoDuplicatorAlertTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoDuplicatorAlertTypes.swift; sourceTree = "<group>"; };
 		A90BC01B2706D813009AA3BF /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		A90BC01D2706D820009AA3BF /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		A92B5C4126F4AB89004C80C6 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		A947EFEF26C6703C00A40B2B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A954922625B1B88C00E6DCF2 /* SelectedImagesOverview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectedImagesOverview.swift; sourceTree = "<group>"; };
 		A957397425B5B5DE00D7E4D4 /* DoubleExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoubleExtension.swift; sourceTree = "<group>"; };
-		A97C94BE25C92A880049CEA4 /* CleanAlertOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CleanAlertOptions.swift; sourceTree = "<group>"; };
 		A98C256E2719BEFC00346AC4 /* PhotoDuplicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoDuplicator.swift; sourceTree = "<group>"; };
 		A98CB3FA25B1A0CA004BD4F0 /* AppSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettingsView.swift; sourceTree = "<group>"; };
 		A98CB3FF25B1A625004BD4F0 /* SettingsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsModel.swift; sourceTree = "<group>"; };
@@ -116,6 +116,15 @@
 			path = "Preview Content";
 			sourceTree = "<group>";
 		};
+		A9049AC5272161A600310F53 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				A9B01D5B25AC5F7500D87CBA /* ImageModel.swift */,
+				A98CB3FF25B1A625004BD4F0 /* SettingsModel.swift */,
+			);
+			name = ViewModels;
+			sourceTree = "<group>";
+		};
 		A957396F25B58F3300D7E4D4 /* Views */ = {
 			isa = PBXGroup;
 			children = (
@@ -130,13 +139,12 @@
 		A98CB3FE25B1A614004BD4F0 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				A9049AC5272161A600310F53 /* ViewModels */,
 				9A1C566C25482F6D00EF2FE8 /* Constants.swift */,
 				A9B01D6325AD825F00D87CBA /* CustomImage.swift */,
-				A9B01D5B25AC5F7500D87CBA /* ImageModel.swift */,
-				A98CB3FF25B1A625004BD4F0 /* SettingsModel.swift */,
-				A97C94BE25C92A880049CEA4 /* CleanAlertOptions.swift */,
 				A9A0B135268D93B200EAB7DF /* AlertItem.swift */,
 				A98C256E2719BEFC00346AC4 /* PhotoDuplicator.swift */,
+				A9049AC62721621F00310F53 /* PhotoDuplicatorAlertTypes.swift */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -275,11 +283,11 @@
 				9A1C566D25482F6D00EF2FE8 /* Constants.swift in Sources */,
 				A98CB40025B1A625004BD4F0 /* SettingsModel.swift in Sources */,
 				A9B348B9268DB9E500035FB8 /* ImprintAndPrivacy.swift in Sources */,
+				A9049AC72721621F00310F53 /* PhotoDuplicatorAlertTypes.swift in Sources */,
 				A9A0B136268D93B200EAB7DF /* AlertItem.swift in Sources */,
 				9AE509CC252371A70015AE53 /* LivePhotoCleanerApp.swift in Sources */,
 				A9B01D6425AD825F00D87CBA /* CustomImage.swift in Sources */,
 				A9B01D6825AD9F5300D87CBA /* FilledButton.swift in Sources */,
-				A97C94BF25C92A880049CEA4 /* CleanAlertOptions.swift in Sources */,
 				A954922725B1B88C00E6DCF2 /* SelectedImagesOverview.swift in Sources */,
 				A9932F2425B047CE00666772 /* ViewExtension.swift in Sources */,
 				A98CB3FB25B1A0CA004BD4F0 /* AppSettingsView.swift in Sources */,

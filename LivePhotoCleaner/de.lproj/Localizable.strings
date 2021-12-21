@@ -64,9 +64,12 @@
 "view_selectedPhotoOverview_alert_success_button" = "OK";
 
 "view_selectedPhotoOverview_alert_warning_title" = "Warnung";
-"view_selectedPhotoOverview_alert_warning_message" = "Es wurden %d editierte Live Photos ausgewählt.\nDie Änderungen an diesen Photos können nicht übertragen werden und gehen verloren.";
+"view_selectedPhotoOverview_alert_warning_message" = "Es wurden %d editierte Live Photos ausgewählt.\nDie Änderungen an diesen Fotos können nicht übertragen werden und gehen verloren.";
 "view_selectedPhotoOverview_alert_cancel_button" = "Abbrechen";
 "view_selectedPhotoOverview_alert_continue_button" = "Löschen";
+
+"view_selectedPhotoOverview_alert_deletionError_userCancelled_message" = "Die LivePhotos wurden erfolgreich dupliziert, konnten jedoch nicht gelöscht werden, da der Vorgang nicht bestätigt wurde.";
+"view_selectedPhotoOverview_alert_deletionError_message" = "Die LivePhotos wurden erfolgreich dupliziert, allerdings ist beim Löschen ein Fehler aufgetreten. Bitte löschen Sie die Bilder manuell oder versuchen Sie es erneut.";
 
 // MARK: - Imprint & Privacy
 "view_imprintPrivacy_privacy_title" = "Datenschutz";

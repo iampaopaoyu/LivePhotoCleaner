@@ -8,38 +8,52 @@
 import Foundation
 import Photos
 import os.log
+import SwiftUI
 
 /// Sepecific class to duplicate a given set of PHPhotos
 class PhotoDuplicator {
 
     private var logger = Logger(subsystem: "PhotoDuplicator", category: "photo duplication")
 
-    private var duplicationBlockSize = 25
+    private var duplicationBlockSize = 0
+    var ignoreCloudError = false
 
     private var assetsFoDuplication: [PHAsset]
     private var duplicatedAssets: [PHAsset]
-
     private var imageCleanData = [String: [PHAssetResourceType : (data: Data, complete: Bool)]]()
 
     private var completionHandler: () -> Void
     private var progressHandler: () -> Void
-    private var errorHandler: (_ processedImages: [PHAsset]) -> Void
+    private var alertHandler: (PhotoDuplicatorAlertTypes, PHPhotosError?) -> Void
+
+    init() {
+        assetsFoDuplication = [PHAsset]()
+        duplicatedAssets =  [PHAsset]()
+
+        self.completionHandler = {}
+        self.progressHandler = {}
+        self.alertHandler = {_, _ in }
+    }
+
+    func setCallbackHandlers(completionHandler: @escaping () -> Void,
+         progressHandler: @escaping () -> Void,
+         alerthandler: @escaping (PhotoDuplicatorAlertTypes, PHPhotosError?) -> Void) {
+
+        self.completionHandler = completionHandler
+        self.progressHandler = progressHandler
+        self.alertHandler = alerthandler
+    }
+
 
     ///Init - expects a list of PHAssets for duplication
     ///
-    ///
-    ///
     /// - parameter assets: The assets that should be duplicated
-    init(assets: [PHAsset]) {
-        assetsFoDuplication = assets.reversed()
-
+    func setAssets(assets: [PHAsset]) {
+        imageCleanData.removeAll()
         duplicatedAssets = [PHAsset]()
 
-        completionHandler = {}
-        progressHandler = {}
-        errorHandler = {_ in }
+        assetsFoDuplication = assets.reversed()
     }
-
 
     /**
      Starts the duplication of the assets given during intialization.
@@ -51,9 +65,14 @@ class PhotoDuplicator {
         // prepare
         imageCleanData.removeAll()
 
+        let block: [PHAsset]
         // get block
-        let block: [PHAsset] = assetsFoDuplication.suffix(duplicationBlockSize)
-        assetsFoDuplication = assetsFoDuplication.dropLast(block.count)
+        if !(duplicationBlockSize < 1) {
+            block = assetsFoDuplication.suffix(duplicationBlockSize)
+            assetsFoDuplication = assetsFoDuplication.dropLast(block.count)
+        } else {
+            block = assetsFoDuplication
+        }
 
         // prepare clean data - load missing asset parts
         prepareImageCleanData(for: block)
@@ -62,8 +81,10 @@ class PhotoDuplicator {
         loadAssetData(for: block)
     }
 
+    // MARK: Prepare and load
     fileprivate func prepareImageCleanData(for assetsToDelete: [PHAsset]) {
         // get image clean data - load asset parts / components
+        imageCleanData.removeAll()
         for asset in assetsToDelete {
             self.imageCleanData[asset.localIdentifier] = [PHAssetResourceType : (data: Data, complete: Bool)]() // create empty dicts for asset
 
@@ -102,21 +123,11 @@ class PhotoDuplicator {
                 },
                                                                 completionHandler: { error in
                     if let err = error as? PHPhotosError {
-                        if err.code == PHPhotosError.Code.networkAccessRequired {
+                        if err.code == PHPhotosError.Code.networkAccessRequired && !self.ignoreCloudError {
                             // FIXME enable
                             self.logger.error("No network access granted but needed.")
                             shouldContinue = false
-                            //                            DispatchQueue.main.async {
-                            //                                self.alert = AlertItem(title: "view_photoOverview_enableIcloudLoadAlert_title",
-                            //                                                       message: "view_photoOverview_enableIcloudLoadAlert_text",
-                            //                                                       dismissOnly: false,
-                            //                                                       primaryButton: ("view_photoOverview_enableIcloudLoadAlert_abort", { self.alert = nil }),
-                            //                                                       secondaryButton: ("view_photoOverview_enableIcloudLoadAlert_load", {
-                            //                                    self.imageCleanData.removeAll()
-                            //                                    UserDefaults.standard.set(true, forKey: Constants.includeIcloudImages)
-                            //                                    self.createStillPhotos(for: assetsToDelete)
-                            //                                }))
-                            //                            }
+                            self.alertHandler(.unableToLoadCloudAssetData, nil)
                         }
                         self.logger.error("Recieved error on data request \(err.localizedDescription)")
                     } else {
@@ -141,10 +152,11 @@ class PhotoDuplicator {
                 }
             }
         }
-        return true
         logger.info("Data complete.")
+        return true
     }
 
+    // MARK: Create new / continue
     fileprivate func createNewAssets(for assets: [PHAsset]) {
         var albumListForAssets = [String: [PHAssetCollection]]()
 
@@ -184,19 +196,19 @@ class PhotoDuplicator {
                     //                        }
                     //                    }
 
-                    self.logger.info("Adding new asset album(s) if any")
-                    for collection in albumListForAssets[asset.localIdentifier] ?? [PHAssetCollection]() {
-                        let addAssetRequest = PHAssetCollectionChangeRequest(for: collection)
-                        addAssetRequest?.addAssets([request.placeholderForCreatedAsset!] as NSArray)
-                    }
+//                    self.logger.info("Adding new asset album(s) if any")
+//                    for collection in albumListForAssets[asset.localIdentifier] ?? [PHAssetCollection]() {
+//                        let addAssetRequest = PHAssetCollectionChangeRequest(for: collection)
+//                        addAssetRequest?.addAssets([request.placeholderForCreatedAsset!] as NSArray)
+//                    }
 
-                    if UserDefaults.standard.bool(forKey: Constants.moveToAlbum) {
-                        self.logger.info("Adding new asset to lpc album")
-                        if let album = lpcAlbum {
-                            let addAssetRequest = PHAssetCollectionChangeRequest(for: album)
-                            addAssetRequest?.addAssets([request.placeholderForCreatedAsset!] as NSArray)
-                        }
-                    }
+//                    if UserDefaults.standard.bool(forKey: Constants.moveToAlbum) {
+//                        self.logger.info("Adding new asset to lpc album")
+//                        if let album = lpcAlbum {
+//                            let addAssetRequest = PHAssetCollectionChangeRequest(for: album)
+//                            addAssetRequest?.addAssets([request.placeholderForCreatedAsset!] as NSArray)
+//                        }
+//                    }
                 } else {
                     self.logger.warning("No image data for current asset \(asset.localIdentifier)")
                 }
@@ -205,14 +217,10 @@ class PhotoDuplicator {
             if succeeded {
                 self.duplicatedAssets.append(contentsOf: assets)
                 self.didDuplicateBlock()
-            } else if let err = error {
-                self.logger.log("\(error?.localizedDescription ?? "")")
-                DispatchQueue.main.async {
-//                    self.alert = AlertItem(title: "view_selectedPhotoOverview_alert_error_title",
-//                                           message: NSLocalizedString("view_selectedPhotoOverview_alert_error_message", comment: "") +  "\(err.localizedDescription)",
-//                                           dismissOnly: true,
-//                                           dismissButton: ("view_selectedPhotoOverview_alert_error_dismissButton", action: self.reset))
-                }
+            } else if let err = error as? PHPhotosError {
+                self.logger.debug("\(error?.localizedDescription ?? "")")
+                self.logger.debug("\(self.duplicatedAssets.count)")
+                self.alertHandler(.assetCreationError, err)
             }
         }
     }
@@ -221,19 +229,24 @@ class PhotoDuplicator {
         if assetsFoDuplication.isEmpty {
             self.logger.info("Successfully added assets.")
 
-            if UserDefaults.standard.bool(forKey: Constants.deleteLivePhotos) {
-                PHAssetChangeRequest.deleteAssets(duplicatedAssets as NSFastEnumeration)
-                // FIXME add
-//                DispatchQueue.main.async {
-//                    self.reset()
-//                }
-            } else {
-                DispatchQueue.main.async {
-                    //                        self.alert = AlertItem(title: "view_selectedPhotoOverview_alert_success_title",
-                    //                                               message: "view_selectedPhotoOverview_alert_success_message",
-                    //                                               dismissOnly: true,
-                    //                                               dismissButton: ("view_selectedPhotoOverview_alert_success_button", action: self.reset))
+            PHPhotoLibrary.shared().performChanges({
+                if UserDefaults.standard.bool(forKey: Constants.deleteLivePhotos) {
+                    PHAssetChangeRequest.deleteAssets(self.duplicatedAssets as NSFastEnumeration)
+                    // FIXME add
+    //                DispatchQueue.main.async {
+    //                    self.reset()
+    //                }
+                } else {
+                    self.alertHandler(.didFinishDuplicateWithoutDelete, nil)
                 }
+            }) { (succeeded, error) in
+                if succeeded {
+                    self.logger.debug("did finish delete")
+                } else if let err = error as? PHPhotosError {
+                    self.logger.log("\(error?.localizedDescription ?? "")")
+                    self.alertHandler(.assetDeletionError, err)
+                }
+                self.imageCleanData.removeAll()
             }
         } else {
             startDuplication()

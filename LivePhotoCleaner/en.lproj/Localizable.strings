@@ -69,6 +69,9 @@
 "view_selectedPhotoOverview_alert_cancel_button" = "Abort";
 "view_selectedPhotoOverview_alert_continue_button" = "Delete";
 
+"view_selectedPhotoOverview_alert_deletionError_userCancelled_message" = "LivePhotos have been duplicated successfully but deletion was cancelled.";
+"view_selectedPhotoOverview_alert_deletionError_message" = "LivePhotos have been successfully duplicated but an error occured durion deletion. Please remove the photos manually or retry.";
+
 // MARK: - Imprint & Privacy
 "view_imprintPrivacy_privacy_title" = "Privacy";
 "view_imprintPrivacy_privacy_text" = "The app does not collect or send personal data in any way.";

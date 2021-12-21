@@ -36,8 +36,14 @@ class ImageModel: NSObject, ObservableObject {
     private var activeRequests = Set<PHImageRequestID>()
     private var fetchAllowed = true
 
+    private var duplicator: PhotoDuplicator
+
     override init() {
+        duplicator = PhotoDuplicator()
         super.init()
+        duplicator.setCallbackHandlers(completionHandler: self.handleDuplicationCompletion,
+                                       progressHandler: self.handleDuplicationCompletion,
+                                       alerthandler: self.handleDuplicationAlert)
         PHPhotoLibrary.shared().register(self)
 
         fetchAllPhotos()
@@ -75,13 +81,13 @@ class ImageModel: NSObject, ObservableObject {
     }
 
     private func selectAllImages(of list: inout [CustomImage]) {
-        selectedImages.append(contentsOf: list)
-
         var imageSum = selectedNormalItemsCount + selectedEditedItemsCount
+        selectedImages.append(contentsOf: list)
         for index in list.indices {
-            if imageSum > 500 {
-                break // alert!
-            }
+//            if imageSum > 500 {
+//                break // alert!
+//            }
+
             // bool for should be cleared
             selectedImages[index].selected = false
             // bool for is selected
@@ -130,7 +136,6 @@ class ImageModel: NSObject, ObservableObject {
         }
         selectedEditedItemsCount = 0
         selectedImages.removeAll()
-        allAssets.removeAll()
     }
 
     /// Tries to fetch all photos that are on the device and in cloud.
@@ -193,9 +198,7 @@ class ImageModel: NSObject, ObservableObject {
         self.logger.info("FetchAll finished")
     }
 
-    func deleteApproved() {
-        self.logger.log("Delete approved")
-        assetsWithError.removeAll()
+    fileprivate func getAssetsOfSelectedImages() -> [PHAsset] {
         var assetsToDelete: [PHAsset] = [PHAsset]()
 
         self.selectedImages.forEach { image in
@@ -203,13 +206,21 @@ class ImageModel: NSObject, ObservableObject {
                 assetsToDelete.append(asset)
             }
         }
+        return assetsToDelete
+    }
+
+    func deleteApproved() {
+        self.logger.log("Delete approved")
+        assetsWithError.removeAll()
+        let assetsToDelete: [PHAsset] = getAssetsOfSelectedImages()
 
         DispatchQueue.global(qos: .userInitiated).async {
             if UserDefaults.standard.bool(forKey: Constants.moveToAlbum) {
                 self.createLPCAlbumIfNotPresent()
             }
 
-            PhotoDuplicator(assets: assetsToDelete).startDuplication()
+            self.duplicator.setAssets(assets: assetsToDelete)
+            self.duplicator.startDuplication()
         }
     }
 
@@ -226,7 +237,7 @@ class ImageModel: NSObject, ObservableObject {
     }
 
     // MARK: - Private helper methods
-    
+
     fileprivate func createAndAddImage(_ asset: PHAsset, _ res: UIImage) {
         DispatchQueue.global(qos: .userInitiated).async {
             //        self.logger.debug("adding asset \(asset.localIdentifier)")
@@ -274,9 +285,9 @@ class ImageModel: NSObject, ObservableObject {
     fileprivate func requestImage(_ manager: PHImageManager, _ asset: PHAsset, _ option: PHImageRequestOptions, _ allowIcloudImages: Bool) -> PHImageRequestID {
         manager.requestImage(for: asset,
                                 targetSize: CGSize(width: Constants.maxImageWidth, height: Constants.maxImageHeight),
-                                       contentMode: .aspectFit,
-                                       options: option,
-                                       resultHandler: { (result, info) -> Void in
+                                contentMode: .aspectFit,
+                                options: option,
+                                resultHandler: { (result, info) -> Void in
             if let inf = info, let key = inf[PHImageResultIsInCloudKey] as? String {
                 self.logger.info("Cloud image key: \(key)")
 
@@ -328,6 +339,61 @@ class ImageModel: NSObject, ObservableObject {
         }
 
         self.logger.warning("Progress is \(progress), error occured: \(error?.localizedDescription ?? "none", privacy: .public)\n\(additionalInfo?.description ?? "no additional info", privacy: .public)")
+    }
+
+    // MARK: PhotoDuplicationCallbacks
+    private func handleDuplicationCompletion() {
+
+    }
+
+    private func handleDuplicationProgress() {
+
+    }
+
+    private func handleDuplicationAlert(_ alertType: PhotoDuplicatorAlertTypes, _ error: PHPhotosError?) {
+        DispatchQueue.main.async {
+            switch alertType {
+            case .unableToLoadCloudAssetData:
+                self.alert = AlertItem(title: "view_photoOverview_enableIcloudLoadAlert_title",
+                                       message: "view_photoOverview_enableIcloudLoadAlert_text",
+                                       dismissOnly: false,
+                                       primaryButton: ("view_photoOverview_enableIcloudLoadAlert_abort", {
+                    self.alert = nil
+                    // TODO: Do we want to abort or continue ?
+                    //                    self.duplicator.ignoreCloudError
+                    //                    self.duplicator.startDuplication()
+                }),
+                                       secondaryButton: ("view_photoOverview_enableIcloudLoadAlert_load", {
+
+                    UserDefaults.standard.set(true, forKey: Constants.includeIcloudImages)
+                    self.duplicator.setAssets(assets: self.getAssetsOfSelectedImages())
+                    self.duplicator.startDuplication()
+                }))
+
+            case .didFinishDuplicateWithoutDelete:
+                self.alert = AlertItem(title: "view_selectedPhotoOverview_alert_success_title",
+                                       message: "view_selectedPhotoOverview_alert_success_message",
+                                       dismissOnly: true,
+                                       dismissButton: ("view_selectedPhotoOverview_alert_success_button", action: self.reset))
+            case .assetCreationError:
+                self.alert = AlertItem(title: "view_selectedPhotoOverview_alert_error_title",
+                                       message: NSLocalizedString("view_selectedPhotoOverview_alert_error_message", comment: "") +  "\(error?.localizedDescription ?? "")",
+                                       dismissOnly: true,
+                                       dismissButton: ("view_selectedPhotoOverview_alert_error_dismissButton", action: self.reset))
+            case .assetDeletionError:
+                if let err = error, err.errorCode == PHPhotosError.Code.userCancelled.rawValue {
+                    self.alert = AlertItem(title: "view_selectedPhotoOverview_alert_error_title",
+                                           message: NSLocalizedString("view_selectedPhotoOverview_alert_deletionError_userCancelled_message", comment: ""),
+                                           dismissOnly: true,
+                                           dismissButton: ("view_selectedPhotoOverview_alert_error_dismissButton", action: self.reset))
+                } else {
+                    self.alert = AlertItem(title: "view_selectedPhotoOverview_alert_error_title",
+                                           message: NSLocalizedString("view_selectedPhotoOverview_alert_deletionError_message", comment: "") +  "\(error?.localizedDescription ?? "")",
+                                           dismissOnly: true,
+                                           dismissButton: ("view_selectedPhotoOverview_alert_error_dismissButton", action: self.reset))
+                }
+            }
+        }
     }
 }
 
@@ -448,3 +514,4 @@ extension ImageModel: PHPhotoLibraryChangeObserver {
         logger.info("Contains changes - updating finished")
     }
 }
+
