@@ -59,27 +59,30 @@ struct PhotoOverview: View {
                         if imageModel.editedImages.count > 0 {
                             Section(header:
                                         VStack {
-                                            getSectionHeader(title: "view_photoOverview_livePhotosEdited",
-                                                             selectAllAction: imageModel.selectAllEditedImages,
-                                                             deselectAllAction: imageModel.deselectAllEditedImages).padding(.top)
-                                            Text("view_photoOverview_editLostWarning")
-                                    .background(Color(UIColor.systemGray5).cornerRadius(8))
-                                        }) {
+                                getSectionHeader(title: "view_photoOverview_livePhotosEdited",
+                                                 selectAllAction: imageModel.selectAllEditedImages,
+                                                 deselectAllAction: imageModel.deselectAllEditedImages).padding(.top)
+                                Text("view_photoOverview_editLostWarning")
+                                    .padding(3)
+                                    .background(Color(UIColor.systemGray5)
+                                                    .opacity(0.5)
+                                                    .cornerRadius(8))
+                            }) {
                                 ForEach(imageModel.editedImages) { image in
                                     getImageView(image, edited: true)
                                 }
                             }
                         }
                     }.padding(.horizontal)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .padding(.top)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .padding(.top)
                 }
                 NavigationLink(destination: SelectedImagesOverview(model: imageModel)) {
                     Text(NSLocalizedString(buttonText, comment: ""))
                 }
                 .padding()
                 .foregroundColor(Color.white)
-                .background(LinearGradient(gradient: Gradient(colors: [Color.accentColor .opacity(0.8), Color.accentColor.opacity(0.7)]), startPoint: .topLeading, endPoint: .bottom))
+                .background(LinearGradient(gradient: Gradient(colors: [Color.accentColor.opacity(0.8), Color.accentColor.opacity(0.7)]), startPoint: .topLeading, endPoint: .bottom))
                 .cornerRadius(20)
                 .shadow(color: Color.black.opacity(0.2), radius: 20, x: 0, y: 20)
                 .isHidden(imageModel.selectedImages.isEmpty, remove: true)
@@ -109,7 +112,7 @@ struct PhotoOverview: View {
                 Image(systemName: "checkmark.circle.fill")
                     .padding(2)
                     .foregroundColor(Color.accentColor)
-                    .background(Circle().foregroundColor(Color.white.opacity(0.5)).padding(2))
+                    .background(Circle().foregroundColor(Color.white).padding(2))
             }
         }.onTapGesture {
             withAnimation {
@@ -156,4 +159,5 @@ struct ContentView_Previews: PreviewProvider {
             .previewDisplayName("iPhone 12 light")
     }
 }
+
 
