@@ -63,6 +63,7 @@ struct PhotoOverview: View {
                                                              selectAllAction: imageModel.selectAllEditedImages,
                                                              deselectAllAction: imageModel.deselectAllEditedImages).padding(.top)
                                             Text("view_photoOverview_editLostWarning")
+                                    .background(Color(UIColor.systemGray5).cornerRadius(8))
                                         }) {
                                 ForEach(imageModel.editedImages) { image in
                                     getImageView(image, edited: true)
@@ -83,6 +84,9 @@ struct PhotoOverview: View {
                 .shadow(color: Color.black.opacity(0.2), radius: 20, x: 0, y: 20)
                 .isHidden(imageModel.selectedImages.isEmpty, remove: true)
                 .padding(.bottom)
+            }
+            .alert(item: $imageModel.alert) { alertItem in
+                alertItem.getAlert()
             }
             .onAppear {
                 imageModel.didShowiCloudAlertError = false
@@ -105,7 +109,7 @@ struct PhotoOverview: View {
                 Image(systemName: "checkmark.circle.fill")
                     .padding(2)
                     .foregroundColor(Color.accentColor)
-                    .background(Circle().foregroundColor(Color.white).padding(2))
+                    .background(Circle().foregroundColor(Color.white.opacity(0.5)).padding(2))
             }
         }.onTapGesture {
             withAnimation {

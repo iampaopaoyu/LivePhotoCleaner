@@ -15,7 +15,12 @@ class ImageModel: NSObject, ObservableObject {
 
     var logger = Logger()
 
+    let imageFileName = "images"
+
     var didShowiCloudAlertError = false
+    let maxImageSelectionCount = 250
+
+    var duplicatedAssets = Set<String>()
 
     @Published var approxFreedSpace = 0.0
     @Published var images = [CustomImage]()
@@ -31,8 +36,6 @@ class ImageModel: NSObject, ObservableObject {
     var imageIndexInformation = [String: (imagesIndex: Int?, editedImagesIndex: Int?, selectedImagesIndex: Int?)]()
     var allAssets = [String: PHAsset]()
 
-    var assetsWithError = [PHAsset]()
-
     private var activeRequests = Set<PHImageRequestID>()
     private var fetchAllowed = true
 
@@ -42,15 +45,17 @@ class ImageModel: NSObject, ObservableObject {
         duplicator = PhotoDuplicator()
         super.init()
         duplicator.setCallbackHandlers(completionHandler: self.handleDuplicationCompletion,
-                                       progressHandler: self.handleDuplicationCompletion,
+                                       progressHandler: self.handleDuplicationProgress,
                                        alerthandler: self.handleDuplicationAlert)
         PHPhotoLibrary.shared().register(self)
+
+        readAlreadyDuplicatedImages()
 
         fetchAllPhotos()
     }
 
     // MARK: - Public part
-
+    // MARK: Selection
     // unmodified images
     func selectAllImages() {
         selectAllImages(of: &images)
@@ -82,11 +87,11 @@ class ImageModel: NSObject, ObservableObject {
 
     private func selectAllImages(of list: inout [CustomImage]) {
         var imageSum = selectedNormalItemsCount + selectedEditedItemsCount
-        selectedImages.append(contentsOf: list)
         for index in list.indices {
-//            if imageSum > 500 {
-//                break // alert!
-//            }
+            if maxImageSelectionCount > 0 && imageSum > maxImageSelectionCount {
+                break // alert!
+            }
+            selectedImages.append(list[index])
 
             // bool for should be cleared
             selectedImages[index].selected = false
@@ -102,6 +107,29 @@ class ImageModel: NSObject, ObservableObject {
         image(with: id, tappedIn: &editedImages, edited: true)
         image(with: id, tappedIn: &images, edited: false)
         calculateFreedSpace()
+    }
+
+    // MARK: - private
+
+    private func readAlreadyDuplicatedImages() {
+        guard var documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
+            // log
+            return
+        }
+
+        documentsDirectory.appendPathComponent(imageFileName)
+
+        if !FileManager.default.fileExists(atPath: documentsDirectory.path) {
+            FileManager.default.createFile(atPath: documentsDirectory.path, contents: nil, attributes: nil)
+        }
+
+        if let fileHandler = try? FileHandle(forUpdating: documentsDirectory.absoluteURL), let data = try? fileHandler.readToEnd() {
+            let assetString = String(data: data, encoding: .utf8)
+            if let ids = assetString?.components(separatedBy: "\n") {
+                duplicatedAssets.formUnion(ids)
+            }
+            fileHandler.closeFile()
+        }
     }
 
     private func image(with id: String, tappedIn images: inout [CustomImage], edited: Bool) {
@@ -127,20 +155,23 @@ class ImageModel: NSObject, ObservableObject {
     }
 
     // reset
-    func reset() {
-        for index in images.indices {
-            images[index].selected = false
+    private func reset() {
+        DispatchQueue.main.async {
+            for index in self.images.indices {
+                self.images[index].selected = false
+            }
+            for index in self.editedImages.indices {
+                self.editedImages[index].selected = false
+            }
+            self.selectedEditedItemsCount = 0
+            self.selectedImages.removeAll()
         }
-        for index in editedImages.indices {
-            editedImages[index].selected = false
-        }
-        selectedEditedItemsCount = 0
-        selectedImages.removeAll()
     }
 
+    // MARK: get assets
     /// Tries to fetch all photos that are on the device and in cloud.
     /// The fetched images are added to the arrays async.
-    func fetchAllPhotos() {
+    private func fetchAllPhotos() {
         allAssets.removeAll()
         self.logger.info("FetchAll started")
         fetchAllowed = true
@@ -160,8 +191,10 @@ class ImageModel: NSObject, ObservableObject {
         var assets = [PHAsset]()
         var assetIds = Set<String>()
         fetchResults.enumerateObjects { (asset, index, stop) in
-            assets.append(asset)
-            assetIds.insert(asset.localIdentifier)
+            if !self.duplicatedAssets.contains(asset.localIdentifier) {
+                assets.append(asset)
+                assetIds.insert(asset.localIdentifier)
+            }
         }
 
         // we could easily calculate this if we'd use sets
@@ -174,7 +207,6 @@ class ImageModel: NSObject, ObservableObject {
         let allowIcloudImages = UserDefaults.standard.bool(forKey: Constants.includeIcloudImages)
         logger.info("Network access allowed to download photos: \(allowIcloudImages)")
 
-        //        DispatchQueue.global(qos: .background).async { // this seems to lead to threading issues
         let manager = PHImageManager.default()
         let option = PHImageRequestOptions()
         option.isNetworkAccessAllowed = allowIcloudImages
@@ -190,11 +222,12 @@ class ImageModel: NSObject, ObservableObject {
 
             allAssets[identifier] = assets[index]
 
+
             let requestId = requestImage(manager, assets[index], option, allowIcloudImages)
             logger.info("adding id \(requestId)")
             activeRequests.insert(requestId)
         }
-        //        }
+
         self.logger.info("FetchAll finished")
     }
 
@@ -209,9 +242,9 @@ class ImageModel: NSObject, ObservableObject {
         return assetsToDelete
     }
 
-    func deleteApproved() {
+    // MARK: Delete
+    private func deleteApproved() {
         self.logger.log("Delete approved")
-        assetsWithError.removeAll()
         let assetsToDelete: [PHAsset] = getAssetsOfSelectedImages()
 
         DispatchQueue.global(qos: .userInitiated).async {
@@ -288,8 +321,8 @@ class ImageModel: NSObject, ObservableObject {
                                 contentMode: .aspectFit,
                                 options: option,
                                 resultHandler: { (result, info) -> Void in
-            if let inf = info, let key = inf[PHImageResultIsInCloudKey] as? String {
-                self.logger.info("Cloud image key: \(key)")
+            if let inf = info, let key = inf[PHImageResultIsInCloudKey] as? Bool {
+                self.logger.info("Image is cloud image: \(key)")
 
                 if !self.images.contains(where: { $0.id == asset.localIdentifier }) {
                     // maybe replace this image with the placeholder only in case it is not yet in any list
@@ -297,24 +330,29 @@ class ImageModel: NSObject, ObservableObject {
                     // this might result in no high-res image, so another rework might be needed
                     self.createAndAddImage(asset, UIImage(systemName: "photo") ?? UIImage())
                 }
-                if key == "0" && !allowIcloudImages {
-                    self.logger.info("Cloud image key is 0, will return from function as cloud image download is not allowed.")
-                    self.alert = AlertItem(title: "view_photoOverview_enableIcloudLoadAlert_title",
-                                           message: "view_photoOverview_enableIcloudLoadAlert_text",
-                                           dismissOnly: false,
-                                           primaryButton: ("view_photoOverview_enableIcloudLoadAlert_abort", { self.alert = nil }),
-                                           secondaryButton: ("view_photoOverview_enableIcloudLoadAlert_load", {
-                        self.fetchAllowed = false
-                        for id in self.activeRequests {
-                            manager.cancelImageRequest(id)
-                            self.images.removeAll()
-                            self.editedImages.removeAll()
-                            self.selectedImages.removeAll()
+                if key && !allowIcloudImages {
+                    self.logger.info("Cloud image key is \(key), will return from function as cloud image download is not allowed.")
+                    if !self.didShowiCloudAlertError {
+                        self.alert = AlertItem(title: "view_photoOverview_enableIcloudLoadAlert_title",
+                                               message: "view_photoOverview_enableIcloudLoadAlert_text",
+                                               dismissOnly: false,
+                                               primaryButton: ("view_photoOverview_enableIcloudLoadAlert_abort", { self.alert = nil }),
+                                               secondaryButton: ("view_photoOverview_enableIcloudLoadAlert_load", {
+                            self.fetchAllowed = false
+                            for id in self.activeRequests {
+                                manager.cancelImageRequest(id)
+                            }
+                            DispatchQueue.main.async {
+                                self.images.removeAll()
+                                self.editedImages.removeAll()
+                                self.selectedImages.removeAll()
+                            }
                             UserDefaults.standard.set(true, forKey: Constants.includeIcloudImages)
                             self.fetchAllPhotos()
-                        }
-                    }))
-                    return
+                        }))
+                        self.didShowiCloudAlertError = true
+                        return
+                    }
                 }
             }
 
@@ -343,11 +381,38 @@ class ImageModel: NSObject, ObservableObject {
 
     // MARK: PhotoDuplicationCallbacks
     private func handleDuplicationCompletion() {
-
+        self.reset()
     }
 
-    private func handleDuplicationProgress() {
+    private func handleDuplicationProgress(_ assets: [String]) {
+        guard var documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
+            // log
+            return
+        }
 
+        documentsDirectory.appendPathComponent(imageFileName)
+
+        var indices = ""
+
+        for id in assets {
+            indices.append(id + "\n")
+        }
+
+        if let fileUpdater = try? FileHandle(forUpdating: documentsDirectory.absoluteURL) {
+            fileUpdater.seekToEndOfFile()
+            fileUpdater.write(indices.data(using: .utf8)!)
+            fileUpdater.closeFile()
+        }
+
+        DispatchQueue.main.async {
+            for id in assets {
+                self.images.removeAll(where: {image in image.id == id })
+                self.editedImages.removeAll(where: {image in image.id == id })
+
+                self.imageIndexInformation[id] = nil
+                self.allAssets[id] = nil
+            }
+        }
     }
 
     private func handleDuplicationAlert(_ alertType: PhotoDuplicatorAlertTypes, _ error: PHPhotosError?) {
@@ -474,6 +539,9 @@ extension ImageModel: PHPhotoLibraryChangeObserver {
             for index in 0..<fetchResultChangeDetails.insertedObjects.count {
                 if !fetchAllowed { break }
                 let identifier = fetchResultChangeDetails.insertedObjects[index].localIdentifier
+
+                if self.duplicatedAssets.contains(identifier) { continue }
+
                 self.logger.log("\(identifier)")
 
                 allAssets[identifier] = fetchResultChangeDetails.insertedObjects[index]
@@ -498,6 +566,7 @@ extension ImageModel: PHPhotoLibraryChangeObserver {
                     self.editedImages.removeAll(where: { identifier == $0.id })
                     self.imageIndexInformation.removeValue(forKey: identifier)
                     self.allAssets.removeValue(forKey: identifier)
+                    self.duplicatedAssets.remove(identifier)
                 }
             }
         }

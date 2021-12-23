@@ -15,7 +15,7 @@ class PhotoDuplicator {
 
     private var logger = Logger(subsystem: "PhotoDuplicator", category: "photo duplication")
 
-    private var duplicationBlockSize = 0
+    private let duplicationBlockSize = 25
     var ignoreCloudError = false
 
     private var assetsFoDuplication: [PHAsset]
@@ -23,21 +23,22 @@ class PhotoDuplicator {
     private var imageCleanData = [String: [PHAssetResourceType : (data: Data, complete: Bool)]]()
 
     private var completionHandler: () -> Void
-    private var progressHandler: () -> Void
+    private var progressHandler: ([String]) -> Void
     private var alertHandler: (PhotoDuplicatorAlertTypes, PHPhotosError?) -> Void
 
     init() {
+        logger.debug("PhotoDuplicator init called.")
         assetsFoDuplication = [PHAsset]()
         duplicatedAssets =  [PHAsset]()
 
         self.completionHandler = {}
-        self.progressHandler = {}
+        self.progressHandler = {_ in }
         self.alertHandler = {_, _ in }
     }
 
     func setCallbackHandlers(completionHandler: @escaping () -> Void,
-         progressHandler: @escaping () -> Void,
-         alerthandler: @escaping (PhotoDuplicatorAlertTypes, PHPhotosError?) -> Void) {
+                             progressHandler: @escaping ([String]) -> Void,
+                             alerthandler: @escaping (PhotoDuplicatorAlertTypes, PHPhotosError?) -> Void) {
 
         self.completionHandler = completionHandler
         self.progressHandler = progressHandler
@@ -78,7 +79,7 @@ class PhotoDuplicator {
         prepareImageCleanData(for: block)
 
         // create new images
-        loadAssetData(for: block)
+        loadAssetData(for: block, completion: createNewAssets(for:))
     }
 
     // MARK: Prepare and load
@@ -101,7 +102,7 @@ class PhotoDuplicator {
         }
     }
 
-    fileprivate func loadAssetData(for assetsToDelete: [PHAsset]) {
+    fileprivate func loadAssetData(for assetsToDelete: [PHAsset], completion: @escaping ([PHAsset]) -> Void) {
         var shouldContinue = true
         for index in 0..<assetsToDelete.count {
             if !shouldContinue { break }
@@ -134,7 +135,7 @@ class PhotoDuplicator {
                         self.logger.log("Received complete data of type \(resourcePart.type.rawValue).")
                         self.imageCleanData[asset.localIdentifier]?[resourcePart.type]?.complete = true
                         if self.allAssetsComplete() {
-                            self.createNewAssets(for: assetsToDelete)
+                            completion(assetsToDelete)
                         }
                     }
                 })
@@ -182,41 +183,42 @@ class PhotoDuplicator {
                     self.logger.log("Adding data for type: \(PHAssetResourceType.photo.rawValue) [PHAssetResourceType]")
                     request.addResource(with: .photo, data: imageData[.photo]?.data ?? Data(), options: options)
 
-                    // Edited asset content - add later on
-                    //                    let createdAssetPlaceholder = request.placeholderForCreatedAsset!
-                    //                    for tuple in imageData {
-                    //                        if tuple.key == .adjustmentData {
-                    //                            self.logger.log("Adding adjustment data to content editing output.")
-                    //                            let editingOutput = PHContentEditingOutput(placeholderForCreatedAsset: createdAssetPlaceholder)
-                    //                            editingOutput.adjustmentData = PHAdjustmentData.init(formatIdentifier: "app.a", formatVersion: "1.0", data: tuple.value.data)
-                    //                            request.contentEditingOutput = editingOutput
-                    //                        } else if tuple.key == .fullSizePhoto {
-                    //                            self.logger.log("Adding full size photo to request.")
-                    //                            request.addResource(with: .fullSizePhoto, data: tuple.value.data, options: options)
-                    //                        }
-                    //                    }
+// Edited asset content - add later on
+                    let createdAssetPlaceholder = request.placeholderForCreatedAsset!
+                    for tuple in imageData {
+                        if tuple.key == .adjustmentData {
+                            self.logger.log("Adding adjustment data to content editing output.")
+                            let editingOutput = PHContentEditingOutput(placeholderForCreatedAsset: createdAssetPlaceholder)
+                            editingOutput.adjustmentData = PHAdjustmentData.init(formatIdentifier: "app.a", formatVersion: "1.0", data: tuple.value.data)
+                            request.contentEditingOutput = editingOutput
+                        } else if tuple.key == .fullSizePhoto {
+                            self.logger.log("Adding full size photo to request.")
+                            request.addResource(with: .fullSizePhoto, data: tuple.value.data, options: options)
+                        }
+                    }
 
-//                    self.logger.info("Adding new asset album(s) if any")
-//                    for collection in albumListForAssets[asset.localIdentifier] ?? [PHAssetCollection]() {
-//                        let addAssetRequest = PHAssetCollectionChangeRequest(for: collection)
-//                        addAssetRequest?.addAssets([request.placeholderForCreatedAsset!] as NSArray)
-//                    }
+                    self.logger.info("Adding new asset album(s) if any")
+                    for collection in albumListForAssets[asset.localIdentifier] ?? [PHAssetCollection]() {
+                        let addAssetRequest = PHAssetCollectionChangeRequest(for: collection)
+                        addAssetRequest?.addAssets([request.placeholderForCreatedAsset!] as NSArray)
+                    }
 
-//                    if UserDefaults.standard.bool(forKey: Constants.moveToAlbum) {
-//                        self.logger.info("Adding new asset to lpc album")
-//                        if let album = lpcAlbum {
-//                            let addAssetRequest = PHAssetCollectionChangeRequest(for: album)
-//                            addAssetRequest?.addAssets([request.placeholderForCreatedAsset!] as NSArray)
-//                        }
-//                    }
+                    if UserDefaults.standard.bool(forKey: Constants.moveToAlbum) {
+                        self.logger.info("Adding new asset to lpc album")
+                        if let album = lpcAlbum {
+                            let addAssetRequest = PHAssetCollectionChangeRequest(for: album)
+                            addAssetRequest?.addAssets([request.placeholderForCreatedAsset!] as NSArray)
+                        }
+                    }
                 } else {
                     self.logger.warning("No image data for current asset \(asset.localIdentifier)")
                 }
             }
         }) { (succeeded, error) in
             if succeeded {
+                self.logger.debug("Moving asset succeeded.")
                 self.duplicatedAssets.append(contentsOf: assets)
-                self.didDuplicateBlock()
+                self.didDuplicate(block: assets)
             } else if let err = error as? PHPhotosError {
                 self.logger.debug("\(error?.localizedDescription ?? "")")
                 self.logger.debug("\(self.duplicatedAssets.count)")
@@ -225,28 +227,28 @@ class PhotoDuplicator {
         }
     }
 
-    fileprivate func didDuplicateBlock() {
+    fileprivate func didDuplicate(block: [PHAsset]) {
+        self.progressHandler(block.map({ asset in return asset.localIdentifier }))
         if assetsFoDuplication.isEmpty {
-            self.logger.info("Successfully added assets.")
-
-            PHPhotoLibrary.shared().performChanges({
-                if UserDefaults.standard.bool(forKey: Constants.deleteLivePhotos) {
+            self.logger.info("Successfully added assets deleting if needed.")
+            // next steps: delete assets if needed
+            // add deleted assets to list of already deleted assets
+            // remove assets from visible / selection screen
+            if UserDefaults.standard.bool(forKey: Constants.deleteLivePhotos) {
+                PHPhotoLibrary.shared().performChanges({
                     PHAssetChangeRequest.deleteAssets(self.duplicatedAssets as NSFastEnumeration)
-                    // FIXME add
-    //                DispatchQueue.main.async {
-    //                    self.reset()
-    //                }
-                } else {
-                    self.alertHandler(.didFinishDuplicateWithoutDelete, nil)
+                }) { (succeeded, error) in
+                    if succeeded {
+                        self.logger.debug("did finish delete")
+                        self.completionHandler()
+                    } else if let err = error as? PHPhotosError {
+                        self.logger.log("\(error?.localizedDescription ?? "")")
+                        self.alertHandler(.assetDeletionError, err)
+                    }
+                    self.imageCleanData.removeAll()
                 }
-            }) { (succeeded, error) in
-                if succeeded {
-                    self.logger.debug("did finish delete")
-                } else if let err = error as? PHPhotosError {
-                    self.logger.log("\(error?.localizedDescription ?? "")")
-                    self.alertHandler(.assetDeletionError, err)
-                }
-                self.imageCleanData.removeAll()
+            } else {
+                self.alertHandler(.didFinishDuplicateWithoutDelete, nil)
             }
         } else {
             startDuplication()
