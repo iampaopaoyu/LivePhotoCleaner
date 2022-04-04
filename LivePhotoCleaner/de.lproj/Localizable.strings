@@ -11,6 +11,8 @@
 
 "view_appSettings_info_section_header" = "Informationen";
 
+"view_appSettings_resetDuplicated" = "Liste von bereits duplizierten Bildern zurücksetzen.";
+
 "view_appSettings_settings_section_header" = "Einstellungen";
 "view_appSettings_settings_delete" = "Originalbilder in Ordner \"Zuletzt gelöscht\" bewegen";
 "view_appSettings_settings_addToAlbum" = "Hinzufügen zu Album \"LivePhotoCleaner\"";
@@ -33,7 +35,7 @@
 // MARK: - Photo Overview
 "view_photoOverview_navigation_title" = "Fotos wählen";
 "view_photoOverview_checkButton" = "Auswahl prüfen";
-"view_photoOverview_noLivePhotos" = "Keine Live Photos gefunden!";
+"view_photoOverview_noLivePhotos" = "Keine Live Photos gefunden oder alle Live Photos wurden bereits dupliziert!";
 "view_photoOverview_livePhotosNormal" = "Unbearbeitete Live Photos";
 "view_photoOverview_livePhotosEdited" = "Bearbeitete Live Photos";
 "view_photoOverview_editLostWarning" = "Achtung, bei den nachfolgenden Bildern wurden Änderungen (Kreative Effekte wie Schleifen, Filter, ...) festgestellt. Diese Version der App kann nur die unveränderten Bilder speichern.";

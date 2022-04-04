@@ -29,5 +29,7 @@ class Constants {
 
     // MARK: - Strings
     static let lpcAlbumName = "Live Photo Cleaner"
+
+    static let imageFileName = "images"
 }
 

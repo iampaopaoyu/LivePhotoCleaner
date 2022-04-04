@@ -46,6 +46,9 @@ struct AppSettingsView: View {
                     Toggle("view_appSettings_settings_delete", isOn: $model.deleteOriginalPhotos)
                     Toggle("view_appSettings_settings_addToAlbum", isOn: $model.moveToAlbum)
                     Toggle("view_appSettings_settings_loadICloud", isOn: $model.includeIcloudPhotos)
+                    Button("view_appSettings_resetDuplicated") {
+                        model.resetDuplicatedInformation()
+                    }
                 }
                 Section(footer:
                             Text("view_appSettings_appInfo_footer_version") + Text(" \(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "") (\(Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? ""))")

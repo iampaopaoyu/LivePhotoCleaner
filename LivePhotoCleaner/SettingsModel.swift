@@ -37,4 +37,26 @@ class SettingsModel: ObservableObject {
 
         return currentLevel
     }
+
+    /**
+     Removes the file which is used to store the list of already duplicated images.
+     */
+    public func resetDuplicatedInformation() {
+        guard var documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
+            // log
+            return
+        }
+
+        documentsDirectory.appendPathComponent(Constants.imageFileName)
+
+        do {
+            if !FileManager.default.fileExists(atPath: documentsDirectory.path) {
+                logger.fault("No file present!")
+            }
+            try FileManager.default.removeItem(at: documentsDirectory)
+            NotificationCenter.default.post(name: Notification.Name("duplicatedImagesReset"), object: nil)
+        } catch {
+            logger.fault("Could not delete reset file.")
+        }
+    }
 }

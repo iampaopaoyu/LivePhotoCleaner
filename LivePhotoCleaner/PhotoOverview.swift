@@ -43,39 +43,40 @@ struct PhotoOverview: View {
         NavigationView {
             VStack {
                 ScrollView {
-                    LazyVGrid(columns: columns, spacing: 3, pinnedViews: .sectionHeaders) {
-                        if imageModel.images.count == 0 && imageModel.editedImages.count == 0 {
-                            Text("view_photoOverview_noLivePhotos")
-                        }
-                        if imageModel.images.count > 0 {
-                            Section(header: getSectionHeader(title: "view_photoOverview_livePhotosNormal",
-                                                             selectAllAction: imageModel.selectAllImages,
-                                                             deselectAllAction: imageModel.deselectAllImages).padding(.top)) {
-                                ForEach(imageModel.images) { image in
-                                    getImageView(image, edited: false)
+                    if imageModel.images.count == 0 && imageModel.editedImages.count == 0 {
+                        Text("view_photoOverview_noLivePhotos").padding()
+                    } else {
+                        LazyVGrid(columns: columns, spacing: 3, pinnedViews: .sectionHeaders) {
+                            if imageModel.images.count > 0 {
+                                Section(header: getSectionHeader(title: "view_photoOverview_livePhotosNormal",
+                                                                 selectAllAction: imageModel.selectAllImages,
+                                                                 deselectAllAction: imageModel.deselectAllImages).padding(.top)) {
+                                    ForEach(imageModel.images) { image in
+                                        getImageView(image, edited: false)
+                                    }
                                 }
                             }
-                        }
-                        if imageModel.editedImages.count > 0 {
-                            Section(header:
-                                        VStack {
-                                getSectionHeader(title: "view_photoOverview_livePhotosEdited",
-                                                 selectAllAction: imageModel.selectAllEditedImages,
-                                                 deselectAllAction: imageModel.deselectAllEditedImages).padding(.top)
-                                Text("view_photoOverview_editLostWarning")
-                                    .padding(3)
-                                    .background(Color(UIColor.systemGray5)
-                                                    .opacity(0.5)
-                                                    .cornerRadius(8))
-                            }) {
-                                ForEach(imageModel.editedImages) { image in
-                                    getImageView(image, edited: true)
+                            if imageModel.editedImages.count > 0 {
+                                Section(header:
+                                            VStack {
+                                    getSectionHeader(title: "view_photoOverview_livePhotosEdited",
+                                                     selectAllAction: imageModel.selectAllEditedImages,
+                                                     deselectAllAction: imageModel.deselectAllEditedImages).padding(.top)
+                                    Text("view_photoOverview_editLostWarning")
+                                        .padding(3)
+                                        .background(Color(UIColor.systemGray5)
+                                                        .opacity(0.5)
+                                                        .cornerRadius(8))
+                                }) {
+                                    ForEach(imageModel.editedImages) { image in
+                                        getImageView(image, edited: true)
+                                    }
                                 }
                             }
-                        }
-                    }.padding(.horizontal)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .padding(.top)
+                        }.padding(.horizontal)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .padding(.top)
+                    }
                 }
                 NavigationLink(destination: SelectedImagesOverview(model: imageModel)) {
                     Text(NSLocalizedString(buttonText, comment: ""))

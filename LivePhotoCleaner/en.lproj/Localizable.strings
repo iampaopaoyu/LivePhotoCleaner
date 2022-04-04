@@ -12,6 +12,8 @@
 
 "view_appSettings_info_section_header" = "Information";
 
+"view_appSettings_resetDuplicated" = "Reset list of already duplicated images.";
+
 "view_appSettings_settings_section_header" = "Settings";
 "view_appSettings_settings_delete" = "Move original images in \"Recently Deleted\" folder";
 "view_appSettings_settings_addToAlbum" = "Add to album \"LivePhotoCleaner\"";
@@ -34,7 +36,7 @@
 // MARK: - Photo Overview
 "view_photoOverview_navigation_title" = "Select photos";
 "view_photoOverview_checkButton" = "Check selection";
-"view_photoOverview_noLivePhotos" = "No live photos found.";
+"view_photoOverview_noLivePhotos" = "No live photos found or all live photos have already been duplicated.";
 "view_photoOverview_livePhotosNormal" = "Live photos (not edited)";
 "view_photoOverview_livePhotosEdited" = "Live photos (edited)";
 "view_photoOverview_editLostWarning" = "Beware, we detected edits (dynamic or creative effects like loops, bounce, filters, etc) on the pictures below. This version of LivePhotoCleaner can only clean the original images.";

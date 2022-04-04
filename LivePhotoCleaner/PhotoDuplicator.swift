@@ -184,18 +184,18 @@ class PhotoDuplicator {
                     request.addResource(with: .photo, data: imageData[.photo]?.data ?? Data(), options: options)
 
 // Edited asset content - add later on
-                    let createdAssetPlaceholder = request.placeholderForCreatedAsset!
-                    for tuple in imageData {
-                        if tuple.key == .adjustmentData {
-                            self.logger.log("Adding adjustment data to content editing output.")
-                            let editingOutput = PHContentEditingOutput(placeholderForCreatedAsset: createdAssetPlaceholder)
-                            editingOutput.adjustmentData = PHAdjustmentData.init(formatIdentifier: "app.a", formatVersion: "1.0", data: tuple.value.data)
-                            request.contentEditingOutput = editingOutput
-                        } else if tuple.key == .fullSizePhoto {
-                            self.logger.log("Adding full size photo to request.")
-                            request.addResource(with: .fullSizePhoto, data: tuple.value.data, options: options)
-                        }
-                    }
+//                    let createdAssetPlaceholder = request.placeholderForCreatedAsset!
+//                    for tuple in imageData {
+//                        if tuple.key == .adjustmentData {
+//                            self.logger.log("Adding adjustment data to content editing output.")
+//                            let editingOutput = PHContentEditingOutput(placeholderForCreatedAsset: createdAssetPlaceholder)
+//                            editingOutput.adjustmentData = PHAdjustmentData.init(formatIdentifier: "app.a", formatVersion: "1.0", data: tuple.value.data)
+//                            request.contentEditingOutput = editingOutput
+//                        } else if tuple.key == .fullSizePhoto {
+//                            self.logger.log("Adding full size photo to request.")
+//                            request.addResource(with: .fullSizePhoto, data: tuple.value.data, options: options)
+//                        }
+//                    }
 
                     self.logger.info("Adding new asset album(s) if any")
                     for collection in albumListForAssets[asset.localIdentifier] ?? [PHAssetCollection]() {

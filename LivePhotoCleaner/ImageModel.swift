@@ -15,8 +15,6 @@ class ImageModel: NSObject, ObservableObject {
 
     var logger = Logger()
 
-    let imageFileName = "images"
-
     var didShowiCloudAlertError = false
     let maxImageSelectionCount = 250
 
@@ -44,14 +42,39 @@ class ImageModel: NSObject, ObservableObject {
     override init() {
         duplicator = PhotoDuplicator()
         super.init()
+
+        NotificationCenter.default.addObserver(forName: Notification.Name("duplicatedImagesReset"), object: nil, queue: nil, using: duplicationListDeletedHandler)
+
+
         duplicator.setCallbackHandlers(completionHandler: self.handleDuplicationCompletion,
                                        progressHandler: self.handleDuplicationProgress,
                                        alerthandler: self.handleDuplicationAlert)
+
         PHPhotoLibrary.shared().register(self)
 
         readAlreadyDuplicatedImages()
-
         fetchAllPhotos()
+    }
+
+    func duplicationListDeletedHandler(_ notification: Notification) {
+        let assetIds = Array(duplicatedAssets)
+        duplicatedAssets.removeAll()
+
+        let allPhotosOptions = PHFetchOptions()
+        allPhotosOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: true)]
+        allPhotosOptions.predicate = NSPredicate(
+            format: "(mediaSubtype & %d) != 0",
+            PHAssetMediaSubtype.photoLive.rawValue
+        )
+
+        let fetched = PHAsset.fetchAssets(withLocalIdentifiers: assetIds, options: allPhotosOptions)
+        var assets = [PHAsset]()
+
+        fetched.enumerateObjects { (asset, index, stop) in
+            assets.append(asset)
+        }
+
+        loadAndAddAssets(assets: assets)
     }
 
     // MARK: - Public part
@@ -117,7 +140,7 @@ class ImageModel: NSObject, ObservableObject {
             return
         }
 
-        documentsDirectory.appendPathComponent(imageFileName)
+        documentsDirectory.appendPathComponent(Constants.imageFileName)
 
         if !FileManager.default.fileExists(atPath: documentsDirectory.path) {
             FileManager.default.createFile(atPath: documentsDirectory.path, contents: nil, attributes: nil)
@@ -168,6 +191,8 @@ class ImageModel: NSObject, ObservableObject {
         }
     }
 
+
+
     // MARK: get assets
     /// Tries to fetch all photos that are on the device and in cloud.
     /// The fetched images are added to the arrays async.
@@ -197,6 +222,9 @@ class ImageModel: NSObject, ObservableObject {
             }
         }
 
+        // we could remove images from the "already deleted images" list here - using a set of all ids and the already duplicated ids
+        // images that are duoplicated but not in all ids can be removed form the list
+
         // we could easily calculate this if we'd use sets
         DispatchQueue.main.async {
             self.images.removeAll(where: { !assetIds.contains($0.id) })
@@ -204,6 +232,12 @@ class ImageModel: NSObject, ObservableObject {
             self.selectedImages.removeAll(where: { !assetIds.contains($0.id) })
         }
 
+        loadAndAddAssets(assets: assets)
+
+        self.logger.info("FetchAll finished")
+    }
+
+    fileprivate func loadAndAddAssets(assets: [PHAsset]) {
         let allowIcloudImages = UserDefaults.standard.bool(forKey: Constants.includeIcloudImages)
         logger.info("Network access allowed to download photos: \(allowIcloudImages)")
 
@@ -222,13 +256,11 @@ class ImageModel: NSObject, ObservableObject {
 
             allAssets[identifier] = assets[index]
 
-
             let requestId = requestImage(manager, assets[index], option, allowIcloudImages)
             logger.info("adding id \(requestId)")
             activeRequests.insert(requestId)
         }
 
-        self.logger.info("FetchAll finished")
     }
 
     fileprivate func getAssetsOfSelectedImages() -> [PHAsset] {
@@ -390,12 +422,16 @@ class ImageModel: NSObject, ObservableObject {
             return
         }
 
-        documentsDirectory.appendPathComponent(imageFileName)
+        documentsDirectory.appendPathComponent(Constants.imageFileName)
 
         var indices = ""
 
         for id in assets {
             indices.append(id + "\n")
+        }
+
+        if !FileManager.default.fileExists(atPath: documentsDirectory.path) {
+            FileManager.default.createFile(atPath: documentsDirectory.path, contents: nil, attributes: nil)
         }
 
         if let fileUpdater = try? FileHandle(forUpdating: documentsDirectory.absoluteURL) {
@@ -412,6 +448,7 @@ class ImageModel: NSObject, ObservableObject {
                 self.imageIndexInformation[id] = nil
                 self.allAssets[id] = nil
             }
+            self.duplicatedAssets = self.duplicatedAssets.union(assets)
         }
     }
 
